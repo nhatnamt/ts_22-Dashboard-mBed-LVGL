@@ -85,9 +85,6 @@ void tft_init()
     disp_drv.ver_res = LV_VER_RES_MAX;    	/*Set the vertical resolution in pixels*/
     
     lv_disp_drv_register(&disp_drv); 
-
-    /*Set default screen to black*/
-    lv_obj_set_style_bg_color(lv_scr_act(), lv_color_black(), LV_PART_MAIN);
 }
 
 /* -------------------------------------------------------------------------- */

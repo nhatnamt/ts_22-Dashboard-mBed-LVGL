@@ -57,5 +57,5 @@ void load_splash()
     lv_obj_set_pos(wp, 0, 0);
     lv_obj_align(wp, LV_ALIGN_CENTER, 0, 0);
 
-    lv_scr_load_anim(scr, LV_SCR_LOAD_ANIM_FADE_ON, 5000, 500, false);
+    lv_scr_load_anim(scr, LV_SCR_LOAD_ANIM_FADE_ON, 3000, 500, false);
 }
