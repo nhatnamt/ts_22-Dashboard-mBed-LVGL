@@ -23,6 +23,7 @@
 #include "lv_conf.h"
 
 #include "screen_splash.h"
+#include "screen_home.h"
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
 /* -------------------------------------------------------------------------- */
@@ -58,6 +59,7 @@ int main() {
 	backend_loop();
 }
 
+
 /**
  * @brief Main navigation of the dash using tileview
  * 
@@ -68,11 +70,9 @@ void load_nav()
     lv_obj_t * scr = lv_obj_create(NULL);
 	lv_obj_t * tv = lv_tileview_create(scr);
 
-	 /*Tile1: just a label*/
+	/*Tile1: just a label*/
     lv_obj_t * tile1 = lv_tileview_add_tile(tv, 0, 0, LV_DIR_LEFT | LV_DIR_RIGHT);
-    lv_obj_t * label = lv_label_create(tile1);
-    lv_label_set_text(label, "Scroll down");
-    lv_obj_center(label);
+    load_home(tile1);
 
 
     /*Tile2: a button*/
@@ -80,7 +80,7 @@ void load_nav()
 
     lv_obj_t * btn = lv_btn_create(tile2);
 
-    label = lv_label_create(btn);
+    lv_obj_t * label = lv_label_create(btn);
     lv_label_set_text(label, "Scroll up or right");
 
     lv_obj_set_size(btn, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
