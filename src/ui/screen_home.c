@@ -19,10 +19,12 @@
 /* -------------------------------------------------------------------------- */
 /*                                   INCLUDES                                 */
 /* -------------------------------------------------------------------------- */
-#include "lvgl.h"
-#include "templates/info_box.h"
-#include <stdio.h>
 #include "screen_home.h"
+#include "driver.hpp"
+
+#include "templates/info_box.h"
+
+
 
 
 /* -------------------------------------------------------------------------- */
@@ -45,14 +47,7 @@ lv_obj_t * ui_main_gauge;
 /* -------------------------------------------------------------------------- */
 void gauge_update_timer(lv_timer_t * timer)
 {
-    if (temp >= 100)
-    {
-        temp = 0;
-    }
-    else
-    {
-        temp++;
-    }
+    temp = can_get_mc_temp();
     lv_obj_t * child = lv_obj_get_child(mc_temp,1);
     lv_label_set_text_fmt(child,"%dF",temp);
     lv_arc_set_value(ui_main_gauge, temp);
@@ -145,5 +140,5 @@ void load_home(lv_obj_t* parent)
 
     //info_box_set_value(mc_temp, "50");
 
-    lv_timer_t * timer = lv_timer_create(gauge_update_timer,10,NULL);
+    lv_timer_t * timer = lv_timer_create(gauge_update_timer,100,NULL);
 }

@@ -6,7 +6,6 @@
 #include "indev/mousewheel.h"
 #include "indev/keyboard.h"
 #include "sdl/sdl.h"
-#include "common.h"
 #include "driver.hpp"
 
 /* -------------------------------------------------------------------------- */
@@ -46,13 +45,15 @@ static void data_simulator(lv_timer_t *timer)
     }
     printf("Hi, MC temp is: %d");
 }
+
 /* -------------------------------------------------------------------------- */
 /*                              GLOBAL FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
-int16_t can_get_mc_temp()
+int16_t can_get_mc_temp(void)
 {
     return mc_temp;
 }
+
 void backend_init(void)
 {
     // Workaround for sdl2 `-m32` crash
@@ -95,6 +96,9 @@ void backend_init(void)
      * You have to call 'lv_tick_inc()' in periodically to inform LittelvGL about how much time were elapsed
      * Create an SDL thread to do this*/
     SDL_CreateThread(tick_thread, "tick", NULL);
+
+    lv_timer_t * timer = lv_timer_create(data_simulator,10,NULL);
+
 }
 
 void backend_loop(void)

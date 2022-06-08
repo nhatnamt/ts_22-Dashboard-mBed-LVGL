@@ -18,12 +18,12 @@
 /* -------------------------------------------------------------------------- */
 /*                                   INCLUDES                                 */
 /* -------------------------------------------------------------------------- */
-#include "common.h"
 #include "lvgl.h"
 #include "lv_conf.h"
 
-#include "screen_splash.h"
-#include "screen_home.h"
+#include "driver.hpp"
+#include "ui/screen_splash.h"
+#include "ui/screen_home.h"
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
 /* -------------------------------------------------------------------------- */
@@ -43,7 +43,6 @@ void load_nav_timer(lv_timer_t *timer)
 int main() {
 	lv_init();
 	backend_init();
-	
 	/*Set default screen to black*/
     lv_obj_set_style_bg_color(lv_scr_act(), lv_color_black(), LV_PART_MAIN);
 
