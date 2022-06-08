@@ -20,4 +20,4 @@
 // header of a cpp file
 #include "driver.hpp"
 
-extern VehicleInfo vehicle_info;
+//extern VehicleInfo vehicle_info;

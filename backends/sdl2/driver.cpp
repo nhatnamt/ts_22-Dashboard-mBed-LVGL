@@ -7,8 +7,12 @@
 #include "indev/keyboard.h"
 #include "sdl/sdl.h"
 #include "common.h"
+#include "driver.hpp"
 
-VehicleInfo vehicle_info;
+/* -------------------------------------------------------------------------- */
+/*                              STATIC VARIABLES                              */
+/* -------------------------------------------------------------------------- */
+static int8_t mc_temp = 0;
 /* -------------------------------------------------------------------------- */
 /*                              STATIC FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
@@ -30,14 +34,25 @@ static int tick_thread(void * data)
     return 0;
 }
 
-// static void data_simulator(lv_timer_t *timer)
-// {
-//     printf("ji");
-// }
+static void data_simulator(lv_timer_t *timer)
+{
+    if (mc_temp >= 100)
+    {
+        mc_temp = 0;
+    }
+    else
+    {
+        mc_temp++;
+    }
+    printf("Hi, MC temp is: %d");
+}
 /* -------------------------------------------------------------------------- */
 /*                              GLOBAL FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
-
+int16_t can_get_mc_temp()
+{
+    return mc_temp;
+}
 void backend_init(void)
 {
     // Workaround for sdl2 `-m32` crash

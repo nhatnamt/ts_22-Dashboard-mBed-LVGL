@@ -7,6 +7,10 @@
 /* -------------------------------------------------------------------------- */
 /*                              GLOBAL FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
+
+/*  Due to memory leak when creating a custom object, 
+    accessing children's will now be done through lv_obj_get_child(parent, idx)
+*/
 lv_obj_t * info_box_create (lv_obj_t * parent, char name[])
 {
     //background
@@ -16,38 +20,21 @@ lv_obj_t * info_box_create (lv_obj_t * parent, char name[])
     lv_obj_set_style_bg_opa(cont, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     
     //label
-    lv_obj_t * label = lv_label_create(cont);
-    lv_label_set_text_static(label,name);
-    printf(label);
+    lv_obj_t * box_label = lv_label_create(cont);
+    lv_label_set_text_static(box_label,name);
+
+    // display value
+    lv_obj_t * box_value = lv_label_create(cont);
+    lv_label_set_text(box_value,"0");
+    lv_obj_set_pos(box_value,70,20);
 
     return cont;
 }
-// info_box_t * info_box_create(lv_obj_t * parent, char name[], char unit[])
-// {
-//     info_box_t * info_box = lv_mem_alloc(sizeof(info_box)); //create and allocate memory for box instance
+
+void info_box_set_value(lv_obj_t * info_box, char value[]) 
+{
+    lv_obj_t * child = lv_obj_get_child(info_box,1); //get second created child
+    lv_label_set_text(child,value);
+    //lv_label_set_text_fmt(child,)
     
-//     //background
-//     lv_obj_t * bg = lv_obj_create(parent);
-//     lv_obj_set_size(bg, 176,84);
-//     lv_obj_set_style_bg_color(bg, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-//     lv_obj_set_style_bg_opa(bg, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-//     info_box->cont = bg;
-
-//     //label
-//     lv_obj_t * label = lv_label_create(bg);
-//     lv_label_set_text_static(label,name);
-//     info_box->label = label;
-
-//     //value
-//     lv_obj_t * value = lv_label_create(bg);
-//     lv_label_set_text(value,"0");
-//     lv_obj_set_pos(value,70,20);
-//     info_box->value = value;
-
-//     return info_box;
-// }
-
-// void info_box_set_value(info_box_t * info_box, char val[]) 
-// {
-//     lv_label_set_text(info_box->value,"50F");
-// }
+}

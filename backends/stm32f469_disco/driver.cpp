@@ -62,8 +62,8 @@ VehicleInfo vehicle_info;
 /*                                  CALLBACKS                                 */
 /* -------------------------------------------------------------------------- */
 void touchpad_init(void);
-static void touchpad_read(lv_indev_drv_t *indev, lv_indev_data_t *data);
-static TS_StateTypeDef  TS_State;
+// static void touchpad_read(lv_indev_drv_t *indev, lv_indev_data_t *data);
+// static TS_StateTypeDef  TS_State;
 
 // void heartbeat_cb()
 // {

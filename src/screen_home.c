@@ -22,6 +22,7 @@
 #include "lvgl.h"
 #include "templates/info_box.h"
 #include <stdio.h>
+#include "screen_home.h"
 
 
 /* -------------------------------------------------------------------------- */
@@ -33,13 +34,33 @@
 /* -------------------------------------------------------------------------- */
  
 
-
+int16_t temp = 0;
 /* -------------------------------------------------------------------------- */
 /*                             STATIC PROTOTYPES                              */
 /* -------------------------------------------------------------------------- */
+lv_obj_t * mc_temp;
+lv_obj_t * ui_main_gauge;
+/* -------------------------------------------------------------------------- */
+/*                              STATIC FUNCTIONS                              */
+/* -------------------------------------------------------------------------- */
+void gauge_update_timer(lv_timer_t * timer)
+{
+    if (temp >= 100)
+    {
+        temp = 0;
+    }
+    else
+    {
+        temp++;
+    }
+    lv_obj_t * child = lv_obj_get_child(mc_temp,1);
+    lv_label_set_text_fmt(child,"%dF",temp);
+    lv_arc_set_value(ui_main_gauge, temp);
+    //info_box_set_value(mc_temp,"20F");
+}
 
 /* -------------------------------------------------------------------------- */
-/*                                  FUNCTIONS                                 */
+/*                              GLOBAL FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
 
 /**
@@ -56,7 +77,7 @@ void load_home(lv_obj_t* parent)
     lv_disp_set_theme(dispp, theme);
 
     /* ------------------------------- main gauge ------------------------------- */
-    lv_obj_t * ui_main_gauge = lv_arc_create(parent);
+    ui_main_gauge = lv_arc_create(parent);
     uint16_t gauge_radius = 350;
 
     // throttle arc
@@ -118,9 +139,11 @@ void load_home(lv_obj_t* parent)
     // lv_obj_set_style_arc_rounded(ui_regen_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
     /* ------------------------------- Mc Temp box ------------------------------ */
-    lv_obj_t * mc_temp = info_box_create(parent,"Hi");
+    mc_temp = info_box_create(parent,"MC Temp");
+    info_box_set_value(mc_temp,"50F");
     //lv_label_set_text(mc_temp->value,"50C");
 
     //info_box_set_value(mc_temp, "50");
 
+    lv_timer_t * timer = lv_timer_create(gauge_update_timer,10,NULL);
 }

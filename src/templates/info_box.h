@@ -46,6 +46,8 @@ typedef struct {
 // Followed this tutorial https://blog.lvgl.io/2018-12-13/extend-lvgl-objects
 
 lv_obj_t * info_box_create (lv_obj_t * parent,  char name[]);
+void info_box_set_value(lv_obj_t * info_box, char value[]); 
+
 /**
  * @brief Create info box
  * 
