@@ -58,15 +58,15 @@ struct MiscInfo
 	uint8_t lv_bus_voltage		= 0;
 };
 typedef struct
-	{
-		uint8_t dash_heartbeat_state 	= 0;
-        uint8_t dash_heartbeat_counter 	= 0;
-		struct VehicleState 	vehicle_state;
-		struct MotorInfo 		motor;
-		struct AccumulatorInfo 	accumulator;
-		struct MiscInfo 		misc;
-	}
-	VehicleInfo;
+{
+	uint8_t dash_heartbeat_state 	= 0;
+	uint8_t dash_heartbeat_counter 	= 0;
+	struct VehicleState 	vehicle_state;
+	struct MotorInfo 		motor;
+	struct AccumulatorInfo 	accumulator;
+	struct MiscInfo 		misc;
+}
+VehicleInfo;
 
 /* -------------------------------------------------------------------------- */
 /*                                  PROTOTYPE                                 */

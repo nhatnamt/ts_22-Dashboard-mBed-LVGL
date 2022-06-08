@@ -6,7 +6,12 @@
 #include "indev/mousewheel.h"
 #include "indev/keyboard.h"
 #include "sdl/sdl.h"
+#include "common.h"
 
+VehicleInfo vehicle_info;
+/* -------------------------------------------------------------------------- */
+/*                              STATIC FUNCTIONS                              */
+/* -------------------------------------------------------------------------- */
 
 /**
  * A task to measure the elapsed time for LittlevGL
@@ -25,6 +30,13 @@ static int tick_thread(void * data)
     return 0;
 }
 
+// static void data_simulator(lv_timer_t *timer)
+// {
+//     printf("ji");
+// }
+/* -------------------------------------------------------------------------- */
+/*                              GLOBAL FUNCTIONS                              */
+/* -------------------------------------------------------------------------- */
 
 void backend_init(void)
 {
@@ -74,6 +86,6 @@ void backend_loop(void)
 {
     while(1) {
         SDL_Delay(5);
-        lv_task_handler();
+        lv_timer_handler();
     }
 }

@@ -21,6 +21,8 @@
 /* -------------------------------------------------------------------------- */
 #include "lvgl.h"
 #include "templates/info_box.h"
+#include <stdio.h>
+
 
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
@@ -55,9 +57,10 @@ void load_home(lv_obj_t* parent)
 
     /* ------------------------------- main gauge ------------------------------- */
     lv_obj_t * ui_main_gauge = lv_arc_create(parent);
+    uint16_t gauge_radius = 350;
 
     // throttle arc
-    lv_obj_set_size(ui_main_gauge, 350,350);
+    lv_obj_set_size(ui_main_gauge, gauge_radius,gauge_radius);
     lv_obj_center(ui_main_gauge);
     
     lv_arc_set_range(ui_main_gauge, 0, 100); /*Set range, value and angle limit of the arc*/
@@ -76,7 +79,7 @@ void load_home(lv_obj_t* parent)
     // brake arcs
     lv_obj_t * ui_brake_arc = lv_arc_create(ui_main_gauge);
 
-    lv_obj_set_size(ui_brake_arc, 350,350);
+    lv_obj_set_size(ui_brake_arc, gauge_radius,gauge_radius);
     lv_obj_center(ui_brake_arc);
     lv_arc_set_mode(ui_brake_arc, LV_ARC_MODE_REVERSE);
 
@@ -94,27 +97,30 @@ void load_home(lv_obj_t* parent)
     lv_obj_set_style_arc_width(ui_brake_arc, 12, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
     lv_obj_set_style_arc_rounded(ui_brake_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
-    // brake arcs
-    lv_obj_t * ui_regen_arc = lv_arc_create(ui_main_gauge);
+    // regen arcs
+    // lv_obj_t * ui_regen_arc = lv_arc_create(ui_main_gauge);
 
-    lv_obj_set_size(ui_regen_arc, 312,312);
-    lv_obj_center(ui_regen_arc);
-    lv_arc_set_mode(ui_regen_arc, LV_ARC_MODE_REVERSE);
+    // lv_obj_set_size(ui_regen_arc, 312,312);
+    // lv_obj_center(ui_regen_arc);
+    // lv_arc_set_mode(ui_regen_arc, LV_ARC_MODE_REVERSE);
     
-    lv_arc_set_range(ui_regen_arc, 0, 100); /*Set range, value and angle limit of the arc*/
-    lv_arc_set_value(ui_regen_arc, 50);
-    lv_arc_set_bg_angles(ui_regen_arc, 315, 60);
+    // lv_arc_set_range(ui_regen_arc, 0, 100); /*Set range, value and angle limit of the arc*/
+    // lv_arc_set_value(ui_regen_arc, 50);
+    // lv_arc_set_bg_angles(ui_regen_arc, 315, 60);
 
-    lv_obj_remove_style(ui_regen_arc, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
-    lv_obj_clear_flag(ui_regen_arc, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
+    // lv_obj_remove_style(ui_regen_arc, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
+    // lv_obj_clear_flag(ui_regen_arc, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
 
-    lv_obj_set_style_arc_width(ui_regen_arc, 12, LV_PART_MAIN | LV_STATE_DEFAULT); /*remove round border background*/
-    lv_obj_set_style_arc_rounded(ui_regen_arc, false, LV_PART_MAIN | LV_STATE_DEFAULT);
+    // lv_obj_set_style_arc_width(ui_regen_arc, 12, LV_PART_MAIN | LV_STATE_DEFAULT); /*remove round border background*/
+    // lv_obj_set_style_arc_rounded(ui_regen_arc, false, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_arc_width(ui_regen_arc, 12, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
-    lv_obj_set_style_arc_rounded(ui_regen_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    // lv_obj_set_style_arc_width(ui_regen_arc, 12, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
+    // lv_obj_set_style_arc_rounded(ui_regen_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
     /* ------------------------------- Mc Temp box ------------------------------ */
-    info_box_t * mc_temp = info_box_create(parent);
+    lv_obj_t * mc_temp = info_box_create(parent,"Hi");
+    //lv_label_set_text(mc_temp->value,"50C");
+
+    //info_box_set_value(mc_temp, "50");
 
 }
