@@ -30,7 +30,8 @@
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
 /* -------------------------------------------------------------------------- */
- 
+#define GAUGE_RADIUS_BIG 320
+#define GAUGE_WIDTH_BIG 30
 /* -------------------------------------------------------------------------- */
 /*                                   STRUCTS                                  */
 /* -------------------------------------------------------------------------- */
@@ -38,20 +39,30 @@
 
 int16_t temp = 0;
 /* -------------------------------------------------------------------------- */
+/*                              STATIC VARIABLES                              */
+/* -------------------------------------------------------------------------- */
+//gaue and info box
+lv_obj_t * ui_main_gauge;
+lv_obj_t * ui_mc_temp;
+lv_obj_t * ui_motor_temp;
+lv_obj_t * ui_accum_temp;
+lv_obj_t * ui_hv_current;
+lv_obj_t * ui_coolant_temp;
+lv_obj_t * ui_coolant_flow;
+lv_obj_t * ui_low_cell_voltage;
+/* -------------------------------------------------------------------------- */
 /*                             STATIC PROTOTYPES                              */
 /* -------------------------------------------------------------------------- */
-lv_obj_t * mc_temp;
-lv_obj_t * ui_main_gauge;
+void gauge_update_timer(lv_timer_t * timer);
 /* -------------------------------------------------------------------------- */
 /*                              STATIC FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
 void gauge_update_timer(lv_timer_t * timer)
 {
     temp = can_get_mc_temp();
-    lv_obj_t * child = lv_obj_get_child(mc_temp,1);
-    lv_label_set_text_fmt(child,"%dF",temp);
+    lv_obj_t * child = lv_obj_get_child(ui_mc_temp,INFO_BOX_VALUE_CHILD_ID);
+    lv_label_set_text_fmt(child,"%d F",temp);
     lv_arc_set_value(ui_main_gauge, temp);
-    //info_box_set_value(mc_temp,"20F");
 }
 
 /* -------------------------------------------------------------------------- */
@@ -73,10 +84,9 @@ void load_home(lv_obj_t* parent)
 
     /* ------------------------------- main gauge ------------------------------- */
     ui_main_gauge = lv_arc_create(parent);
-    uint16_t gauge_radius = 350;
 
     // throttle arc
-    lv_obj_set_size(ui_main_gauge, gauge_radius,gauge_radius);
+    lv_obj_set_size(ui_main_gauge, GAUGE_RADIUS_BIG,GAUGE_RADIUS_BIG);
     lv_obj_center(ui_main_gauge);
     
     lv_arc_set_range(ui_main_gauge, 0, 100); /*Set range, value and angle limit of the arc*/
@@ -95,7 +105,7 @@ void load_home(lv_obj_t* parent)
     // brake arcs
     lv_obj_t * ui_brake_arc = lv_arc_create(ui_main_gauge);
 
-    lv_obj_set_size(ui_brake_arc, gauge_radius,gauge_radius);
+    lv_obj_set_size(ui_brake_arc, GAUGE_RADIUS_BIG,GAUGE_RADIUS_BIG);
     lv_obj_center(ui_brake_arc);
     lv_arc_set_mode(ui_brake_arc, LV_ARC_MODE_REVERSE);
 
@@ -133,12 +143,24 @@ void load_home(lv_obj_t* parent)
     // lv_obj_set_style_arc_width(ui_regen_arc, 12, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
     // lv_obj_set_style_arc_rounded(ui_regen_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
-    /* ------------------------------- Mc Temp box ------------------------------ */
-    mc_temp = info_box_create(parent,"MC Temp");
-    info_box_set_value(mc_temp,"50F");
-    //lv_label_set_text(mc_temp->value,"50C");
+    /* ------------------------------- info boxes ------------------------------- */
+    ui_mc_temp = info_box_create(parent,"MC Temp");
+    lv_obj_set_pos(ui_mc_temp,-255,-165);
 
-    //info_box_set_value(mc_temp, "50");
+    ui_motor_temp = info_box_create(parent,"Motor Temp");
+    lv_obj_set_pos(ui_motor_temp,-290,0);
+
+    ui_accum_temp = info_box_create(parent,"Accum Temp");
+    lv_obj_set_pos(ui_accum_temp,-255,165);
+
+    ui_coolant_temp = info_box_create(parent,"Coolant Temp");
+    lv_obj_set_pos(ui_coolant_temp,255,-165);
+
+    ui_coolant_flow = info_box_create(parent,"Coolant Flow");
+    lv_obj_set_pos(ui_coolant_flow,290,0);
+
+    ui_low_cell_voltage = info_box_create(parent,"Low Cell Volt");
+    lv_obj_set_pos(ui_low_cell_voltage,255, 165);
 
     lv_timer_t * timer = lv_timer_create(gauge_update_timer,100,NULL);
 }

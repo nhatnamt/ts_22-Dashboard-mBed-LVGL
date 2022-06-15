@@ -72,17 +72,17 @@ void tft_init()
     static lv_disp_draw_buf_t disp_buf;
 
     /*Static or global buffer(s)*/
-    static lv_color_t buf[LV_HOR_RES_MAX * 10];
+    static lv_color_t buf[TFT_HOR_RES * 10];
     
     /*Initialize `disp_buf` with the buffer(s). With only one buffer use NULL instead buf_2 */
-    lv_disp_draw_buf_init(&disp_buf, buf, NULL, LV_HOR_RES_MAX*10);
+    lv_disp_draw_buf_init(&disp_buf, buf, NULL, TFT_HOR_RES*10);
 
     /*Basic initialization*/
     lv_disp_drv_init(&disp_drv);            
     disp_drv.draw_buf = &disp_buf;          /*Set an initialized buffer*/
     disp_drv.flush_cb = tft_flush;        	/*Set a flush callback to draw to the display*/
-    disp_drv.hor_res = LV_HOR_RES_MAX;   	/*Set the horizontal resolution in pixels*/
-    disp_drv.ver_res = LV_VER_RES_MAX;    	/*Set the vertical resolution in pixels*/
+    disp_drv.hor_res = TFT_HOR_RES;   	/*Set the horizontal resolution in pixels*/
+    disp_drv.ver_res = TFT_VER_RES;    	/*Set the vertical resolution in pixels*/
     
     lv_disp_drv_register(&disp_drv); 
 }

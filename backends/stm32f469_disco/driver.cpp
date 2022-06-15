@@ -26,6 +26,8 @@
 #include "bsp_drivers/stm32469i_discovery_lcd.h"
 #include "lv_conf.h"
 #include "tft/tft.h"
+#include "mbed.h"
+
 #include "touchpad/touchpad.h"
 
 #include "bsp_drivers\stm32469i_discovery.h"
@@ -55,23 +57,29 @@ Ticker                  ticker_heartbeat;
 Ticker                  ticker_can_transmit;
 Ticker					ticker_lvgl;
 
-VehicleInfo vehicle_info;
+//VehicleInfo vehicle_info;
 
+/* -------------------------------------------------------------------------- */
+/*                              STATIC VARIABLES                              */
+/* -------------------------------------------------------------------------- */
 
+static int16_t mc_temp = 0;
 /* -------------------------------------------------------------------------- */
 /*                                  CALLBACKS                                 */
 /* -------------------------------------------------------------------------- */
-void touchpad_init(void);
-// static void touchpad_read(lv_indev_drv_t *indev, lv_indev_data_t *data);
-// static TS_StateTypeDef  TS_State;
-
-// void heartbeat_cb()
-// {
-// 	vehicle_info.dash_heartbeat_counter++;
-// 	can2_rx_led = led1;
-// 	led1 = !led1;
+void heartbeat_cb()
+{
+    if (mc_temp >= 100)
+    {
+        mc_temp = 0;
+    }
+    else
+    {
+        mc_temp++;
+    }
+	led1 = !led1;
 	
-// }
+}
 
 void lv_ticker_func()
 {
@@ -79,10 +87,20 @@ void lv_ticker_func()
 
 }
 
+/* -------------------------------------------------------------------------- */
+/*                              GLOBAL FUNCTIONS                              */
+/* -------------------------------------------------------------------------- */
+int16_t can_get_mc_temp(void)
+{
+    return mc_temp;
+}
+
 void backend_init()
 {
     //printf("Hi!\r\n");
     ticker_lvgl.attach(&lv_ticker_func,TICKER_TIME);
+    ticker_heartbeat.attach(&heartbeat_cb,100ms);
+
 
     tft_init();
     touchpad_init();

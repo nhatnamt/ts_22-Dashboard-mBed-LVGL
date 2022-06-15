@@ -29,36 +29,27 @@
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
 /* -------------------------------------------------------------------------- */
- 
+enum info_box_child_id 
+{
+    INFO_BOX_LABEL_CHILD_ID,
+    INFO_BOX_VALUE_CHILD_ID,
+    INFO_BOX_UNIT_CHILD_ID
+};
+
 /* -------------------------------------------------------------------------- */
-/*                                   TYPEDEFS                                 */
-/* -------------------------------------------------------------------------- */
- 
-typedef struct {
-    lv_obj_t * cont;
-    lv_obj_t * label;
-    lv_obj_t * value;
-} info_box_t;
-/* -------------------------------------------------------------------------- */
-/*                                  PROTOTYPE                                 */
+/*                              GLOBAL PROTOTYPE                              */
 /* -------------------------------------------------------------------------- */
 
-// Followed this tutorial https://blog.lvgl.io/2018-12-13/extend-lvgl-objects
-
-lv_obj_t * info_box_create (lv_obj_t * parent,  char name[]);
-void info_box_set_value(lv_obj_t * info_box, char value[]); 
-
+// Followed this tutorial https://github.com/lvgl/lv_demos/blob/master/src/lv_demo_music/lv_demo_music_list.c
 /**
- * @brief Create info box
+ * @brief 
  * 
- * @param parent The parrent object
- * @param name Display name of the box
- * @param unit Unit of the display value
- * @return info_box_t* 
+ * @param parent the parent object
+ * @param label_text box's label
+ * @return lv_obj_t* 
  */
-// info_box_t * info_box_create(lv_obj_t * parent, char name[], char unit[]);
+lv_obj_t * info_box_create (lv_obj_t * parent,  const char * label_text);
 
-// void info_box_set_value(info_box_t * info_box, char value[]);
 /* --------------------------------- GUARDS --------------------------------- */
 #ifdef __cplusplus
 }
