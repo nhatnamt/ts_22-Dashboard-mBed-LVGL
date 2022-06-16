@@ -99,12 +99,11 @@ void backend_init()
 {
     //printf("Hi!\r\n");
     ticker_lvgl.attach(&lv_ticker_func,TICKER_TIME);
-    ticker_heartbeat.attach(&heartbeat_cb,100ms);
+    ticker_heartbeat.attach(&heartbeat_cb,10ms);
 
 
     tft_init();
     touchpad_init();
-    lv_disp_set_rotation(NULL,LV_DISP_ROT_180);
     //wait_us(1000000);
 }
 

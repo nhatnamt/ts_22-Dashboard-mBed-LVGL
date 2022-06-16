@@ -26,7 +26,7 @@ lv_obj_t * button_warning_create(lv_obj_t * parent)
     /*Init style*/
     static lv_style_t warning_line_style;
     lv_style_init(&warning_line_style);
-    lv_style_set_line_width(&warning_line_style, 20);
+    lv_style_set_line_width(&warning_line_style, 30);
     lv_style_set_line_color(&warning_line_style, lv_palette_main(LV_PALETTE_GREY));
     lv_style_set_line_rounded(&warning_line_style, true);
 
@@ -64,5 +64,56 @@ void hide_warning(lv_obj_t * obj)
 lv_obj_t * critical_error_create(lv_obj_t * parent)
 {
     lv_obj_t * outter_cont = lv_obj_create(parent);
-    //lv_obj_set_style_bg_color(outter_cont,)
+
+    lv_obj_set_size(outter_cont,800,480);
+    lv_obj_set_style_border_color(outter_cont,lv_palette_darken(LV_PALETTE_RED,3),0);
+    lv_obj_set_style_border_width(outter_cont,15,0);
+    lv_obj_set_style_bg_color(outter_cont,lv_color_black(),0);
+    lv_obj_set_style_bg_opa(outter_cont,LV_OPA_40,0);
+
+    
+    lv_obj_t * inner_cont = lv_obj_create(outter_cont);
+
+    lv_obj_set_size(inner_cont,LV_SIZE_CONTENT,LV_SIZE_CONTENT);
+    lv_obj_set_style_bg_color(inner_cont,lv_color_black(),0);
+    lv_obj_set_style_bg_opa(inner_cont,LV_OPA_80,0);
+    lv_obj_center(inner_cont);
+
+    lv_obj_t * label = lv_label_create(inner_cont);
+    lv_obj_set_style_text_color(label,lv_palette_main(LV_PALETTE_RED),0);
+    lv_obj_set_style_text_font(label,&lv_font_montserrat_32,0);
+
+    lv_obj_add_flag(outter_cont, LV_OBJ_FLAG_HIDDEN);
+    return outter_cont;
+}
+
+void show_IMD_error(lv_obj_t * obj)
+{
+    lv_obj_t * label = get_error_label(obj);
+    lv_label_set_text(label,"CRITICAL ERROR: IMD TRIGGERD");
+    lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
+}
+
+void show_BSPD_error(lv_obj_t * obj)
+{
+    lv_obj_t * label = get_error_label(obj);
+    lv_label_set_text(label,"CRITICAL ERROR: BSPD TRIGGERD");
+    lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
+}
+
+void show_PDOC_error(lv_obj_t * obj)
+{
+    lv_obj_t * label = get_error_label(obj);
+    lv_label_set_text(label,"CRITICAL ERROR: PDOC TRIGGERD");
+    lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
+}
+void show_AMS_error(lv_obj_t * obj)
+{
+    lv_obj_t * label = get_error_label(obj);
+    lv_label_set_text(label,"CRITICAL ERROR: AMS TRIGGERD");
+    lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
 }
