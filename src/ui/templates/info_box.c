@@ -29,11 +29,9 @@ lv_obj_t * info_box_create (lv_obj_t * parent, const char * label_text)
     //label
     lv_obj_t * ui_label = lv_label_create(ui_cont);
 
-    lv_obj_set_width(ui_label, LV_SIZE_CONTENT);
-    lv_obj_set_height(ui_label, LV_SIZE_CONTENT);
+    lv_obj_set_size(ui_label,LV_SIZE_CONTENT,LV_SIZE_CONTENT);
 
-    //lv_obj_set_x(ui_label, -9);
-    //lv_obj_set_y(ui_label, -15);
+    lv_obj_set_pos(ui_label, -9,-15);
     lv_label_set_text_static(ui_label,label_text);
     
     lv_obj_set_style_text_font(ui_label, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -51,4 +49,9 @@ lv_obj_t * info_box_create (lv_obj_t * parent, const char * label_text)
 
 
     return ui_cont;
+}
+
+void info_box_update_color(lv_obj_t * ui_value)
+{
+    
 }

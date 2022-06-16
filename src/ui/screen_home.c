@@ -30,7 +30,7 @@
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
 /* -------------------------------------------------------------------------- */
-#define GAUGE_RADIUS_BIG 320
+#define GAUGE_DIA_BIG 320
 #define GAUGE_WIDTH_BIG 30
 /* -------------------------------------------------------------------------- */
 /*                                   STRUCTS                                  */
@@ -46,18 +46,19 @@ lv_obj_t * ui_main_gauge;
 lv_obj_t * ui_mc_temp;
 lv_obj_t * ui_motor_temp;
 lv_obj_t * ui_accum_temp;
-lv_obj_t * ui_hv_current;
+lv_obj_t * ui_accum_volt;
+lv_obj_t * ui_accum_current;
 lv_obj_t * ui_coolant_temp;
 lv_obj_t * ui_coolant_flow;
 lv_obj_t * ui_low_cell_voltage;
 /* -------------------------------------------------------------------------- */
 /*                             STATIC PROTOTYPES                              */
 /* -------------------------------------------------------------------------- */
-void gauge_update_timer(lv_timer_t * timer);
+void gauge_update_task(lv_timer_t * timer);
 /* -------------------------------------------------------------------------- */
 /*                              STATIC FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
-void gauge_update_timer(lv_timer_t * timer)
+void gauge_update_task(lv_timer_t * timer)
 {
     temp = can_get_mc_temp();
     lv_obj_t * child = lv_obj_get_child(ui_mc_temp,INFO_BOX_VALUE_CHILD_ID);
@@ -86,7 +87,7 @@ void load_home(lv_obj_t* parent)
     ui_main_gauge = lv_arc_create(parent);
 
     // throttle arc
-    lv_obj_set_size(ui_main_gauge, GAUGE_RADIUS_BIG,GAUGE_RADIUS_BIG);
+    lv_obj_set_size(ui_main_gauge, GAUGE_DIA_BIG,GAUGE_DIA_BIG);
     lv_obj_center(ui_main_gauge);
     
     lv_arc_set_range(ui_main_gauge, 0, 100); /*Set range, value and angle limit of the arc*/
@@ -105,7 +106,7 @@ void load_home(lv_obj_t* parent)
     // brake arcs
     lv_obj_t * ui_brake_arc = lv_arc_create(ui_main_gauge);
 
-    lv_obj_set_size(ui_brake_arc, GAUGE_RADIUS_BIG,GAUGE_RADIUS_BIG);
+    lv_obj_set_size(ui_brake_arc, GAUGE_DIA_BIG,GAUGE_DIA_BIG);
     lv_obj_center(ui_brake_arc);
     lv_arc_set_mode(ui_brake_arc, LV_ARC_MODE_REVERSE);
 
@@ -143,6 +144,36 @@ void load_home(lv_obj_t* parent)
     // lv_obj_set_style_arc_width(ui_regen_arc, 12, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
     // lv_obj_set_style_arc_rounded(ui_regen_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
+    // HV Voltage
+    ui_accum_volt = lv_label_create(ui_main_gauge);
+    lv_label_set_text(ui_accum_volt, "600 V");
+
+    lv_obj_center(ui_accum_volt);
+    lv_obj_set_y(ui_accum_volt, -30);
+    lv_obj_set_style_text_font(ui_accum_volt,&lv_font_montserrat_40,LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    // A small line seperating
+    static lv_style_t style_line;
+    lv_style_init(&style_line);
+    lv_style_set_line_width(&style_line, 3);
+    lv_style_set_line_color(&style_line, lv_palette_main(LV_PALETTE_BLUE));
+    lv_style_set_line_rounded(&style_line, true);
+
+    static lv_point_t line_points[] = { {0, 0}, {150, 0}};
+    lv_obj_t * line = lv_line_create(ui_main_gauge);
+    
+    lv_line_set_points(line, line_points, 2); 
+    lv_obj_add_style(line, &style_line, 0);
+    lv_obj_center(line);
+    lv_obj_set_y(line, 8);
+    // HV Current
+    ui_accum_current = lv_label_create(ui_main_gauge);
+    lv_label_set_text(ui_accum_current, "100 A");
+
+    lv_obj_center(ui_accum_current);
+    lv_obj_set_y(ui_accum_current, 45);
+    lv_obj_set_style_text_font(ui_accum_current,&lv_font_montserrat_36,LV_PART_MAIN | LV_STATE_DEFAULT);
+
     /* ------------------------------- info boxes ------------------------------- */
     ui_mc_temp = info_box_create(parent,"MC Temp");
     lv_obj_set_pos(ui_mc_temp,-255,-165);
@@ -162,5 +193,5 @@ void load_home(lv_obj_t* parent)
     ui_low_cell_voltage = info_box_create(parent,"Low Cell Volt");
     lv_obj_set_pos(ui_low_cell_voltage,255, 165);
 
-    lv_timer_t * timer = lv_timer_create(gauge_update_timer,100,NULL);
+    lv_timer_t * timer = lv_timer_create(gauge_update_task,100,NULL);
 }

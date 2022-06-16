@@ -43,7 +43,7 @@ static void data_simulator(lv_timer_t *timer)
     {
         mc_temp++;
     }
-    printf("Hi, MC temp is: %d");
+    //printf("Hi, MC temp is: %d");
 }
 
 /* -------------------------------------------------------------------------- */
