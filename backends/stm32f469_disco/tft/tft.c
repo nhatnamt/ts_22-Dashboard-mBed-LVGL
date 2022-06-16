@@ -83,7 +83,7 @@ void tft_init()
     disp_drv.flush_cb = tft_flush;        	/*Set a flush callback to draw to the display*/
     disp_drv.hor_res = TFT_HOR_RES;   	/*Set the horizontal resolution in pixels*/
     disp_drv.ver_res = TFT_VER_RES;    	/*Set the vertical resolution in pixels*/
-    
+    disp_drv.sw_rotate = 1;
     lv_disp_drv_register(&disp_drv); 
 }
 

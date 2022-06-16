@@ -104,7 +104,7 @@ void backend_init()
 
     tft_init();
     touchpad_init();
-    
+    lv_disp_set_rotation(NULL,LV_DISP_ROT_180);
     //wait_us(1000000);
 }
 

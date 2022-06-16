@@ -23,6 +23,7 @@
 #include "driver.hpp"
 
 #include "templates/info_box.h"
+#include "templates/warning_error.h"
 
 
 
@@ -52,6 +53,9 @@ lv_obj_t * ui_coolant_temp;
 lv_obj_t * ui_coolant_flow;
 lv_obj_t * ui_low_cell_voltage;
 lv_obj_t * ui_ams_state;
+
+lv_obj_t * button_warning;
+
 /* -------------------------------------------------------------------------- */
 /*                             STATIC PROTOTYPES                              */
 /* -------------------------------------------------------------------------- */
@@ -153,7 +157,7 @@ void load_home(lv_obj_t* parent)
     lv_obj_set_y(ui_accum_volt, -30);
     lv_obj_set_style_text_font(ui_accum_volt,&lv_font_montserrat_40,LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    // A small line seperating
+    // A small line seperating voltage and current
     static lv_style_t style_line;
     lv_style_init(&style_line);
     lv_style_set_line_width(&style_line, 3);
@@ -202,6 +206,12 @@ void load_home(lv_obj_t* parent)
     lv_obj_set_y(ui_ams_state, 190);
     lv_obj_set_style_text_font(ui_ams_state,&lv_font_montserrat_18,LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    /* --------------------------- Warning and errors --------------------------- */
+    button_warning = button_warning_create(parent); // for when a button is pressed
+    show_precharge_warning(button_warning);
 
+    //lv_obj_clear_flag(precharge_warning,LV_OBJ_FLAG_HIDDEN);
+
+    /* --------------------------------- Timers --------------------------------- */
     lv_timer_create(gauge_update_task,100,NULL);
 }

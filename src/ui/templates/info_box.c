@@ -1,6 +1,12 @@
+/********************************************************************************
+* @file    info_box.c
+* @author  Nam Tran
+* @version 2.0
+* @date    22/05/2022
+* @brief   Custom component - Info box template on the home screen inheritated from lv_obj_t
+*********************************************************************************
+*/
 #include "info_box.h"
-
-#define MY_CLASS &lv_arc_class
 
 
 
