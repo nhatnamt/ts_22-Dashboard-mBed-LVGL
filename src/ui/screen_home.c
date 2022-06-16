@@ -51,6 +51,7 @@ lv_obj_t * ui_accum_current;
 lv_obj_t * ui_coolant_temp;
 lv_obj_t * ui_coolant_flow;
 lv_obj_t * ui_low_cell_voltage;
+lv_obj_t * ui_ams_state;
 /* -------------------------------------------------------------------------- */
 /*                             STATIC PROTOTYPES                              */
 /* -------------------------------------------------------------------------- */
@@ -156,7 +157,7 @@ void load_home(lv_obj_t* parent)
     static lv_style_t style_line;
     lv_style_init(&style_line);
     lv_style_set_line_width(&style_line, 3);
-    lv_style_set_line_color(&style_line, lv_palette_main(LV_PALETTE_BLUE));
+    lv_style_set_line_color(&style_line, lv_palette_main(LV_PALETTE_GREY));
     lv_style_set_line_rounded(&style_line, true);
 
     static lv_point_t line_points[] = { {0, 0}, {150, 0}};
@@ -193,5 +194,14 @@ void load_home(lv_obj_t* parent)
     ui_low_cell_voltage = info_box_create(parent,"Low Cell Volt");
     lv_obj_set_pos(ui_low_cell_voltage,255, 165);
 
-    lv_timer_t * timer = lv_timer_create(gauge_update_task,100,NULL);
+    /* -------------------------------- AMS State ------------------------------- */
+    ui_ams_state = lv_label_create(parent);
+    lv_label_set_text(ui_ams_state, "AMS State 1: Idle");
+
+    lv_obj_center(ui_ams_state);
+    lv_obj_set_y(ui_ams_state, 190);
+    lv_obj_set_style_text_font(ui_ams_state,&lv_font_montserrat_18,LV_PART_MAIN | LV_STATE_DEFAULT);
+
+
+    lv_timer_create(gauge_update_task,100,NULL);
 }
