@@ -65,6 +65,20 @@ void backend_init();
 void backend_loop();
 
 int16_t can_get_mc_temp();
+int16_t can_get_motor_temp();
+int16_t can_get_accum_temp();
+int16_t can_get_coolant_temp();
+int16_t can_get_coolant_flow();
+int16_t can_get_lowest_cell_volt();
+
+uint8_t can_get_throttle_pct();
+int16_t can_get_accum_volt();
+int16_t can_get_accum_current();
+uint8_t can_get_ams_state();
+uint8_t can_get_precharge_button();
+uint8_t can_get_drive_button();
+uint8_t can_get_bspd_error();
+
 
 /* --------------------------------- Guards --------------------------------- */
 #ifdef __cplusplus

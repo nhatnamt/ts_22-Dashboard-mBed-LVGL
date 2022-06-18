@@ -84,9 +84,10 @@ void tft_init()
     disp_drv.hor_res = TFT_HOR_RES;   	/*Set the horizontal resolution in pixels*/
     disp_drv.ver_res = TFT_VER_RES;    	/*Set the vertical resolution in pixels*/
     disp_drv.sw_rotate = 1;
+    lv_disp_drv_register(&disp_drv);
+
     lv_disp_set_rotation(NULL,LV_DISP_ROT_180);
-    
-    lv_disp_drv_register(&disp_drv); 
+
 }
 
 /* -------------------------------------------------------------------------- */
