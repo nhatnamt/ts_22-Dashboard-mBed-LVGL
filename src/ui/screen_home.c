@@ -5,14 +5,6 @@
 * @date    20/05/2022
 * @brief   Home screen header
 *********************************************************************************
-* @details 
-* ----------------------------
-* Definitions and declarations
-* 
-* ----------------------------
-* Functions
-*   load_home() prototype
-*********************************************************************************
 */
 
 
@@ -33,9 +25,6 @@
 /* -------------------------------------------------------------------------- */
 #define GAUGE_DIA_BIG 320
 #define GAUGE_WIDTH_BIG 30
-/* -------------------------------------------------------------------------- */
-/*                                   STRUCTS                                  */
-/* -------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------- */
 /*                              STATIC VARIABLES                              */
@@ -64,119 +53,119 @@ void gauge_update_task(lv_timer_t * timer);
 /* -------------------------------------------------------------------------- */
 void gauge_update_task(lv_timer_t * timer)
 {
-    static int16_t mc_temp = 0;
-    if (mc_temp != can_get_mc_temp())
-    {
-        mc_temp = can_get_mc_temp();
-        lv_obj_t * label_value = lv_obj_get_child(ui_mc_temp,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%d C",mc_temp);
+    static VehicleState vehicle_state;
+    // if (mc_temp != can_get_mc_temp())
+    // {
+    //     mc_temp = can_get_mc_temp();
+    //     lv_obj_t * label_value = lv_obj_get_child(ui_mc_temp,INFO_BOX_VALUE_CHILD_ID);
+    //     lv_label_set_text_fmt(label_value,"%d C",mc_temp);
 
-    }
+    // }
 
-    static int16_t motor_temp = 0;
-    if (motor_temp != can_get_motor_temp())
-    {
-        motor_temp = can_get_motor_temp();
-        lv_obj_t * label_value = lv_obj_get_child(ui_motor_temp,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%d C",motor_temp);
-    }
+    // static int16_t motor_temp = 0;
+    // if (motor_temp != can_get_motor_temp())
+    // {
+    //     motor_temp = can_get_motor_temp();
+    //     lv_obj_t * label_value = lv_obj_get_child(ui_motor_temp,INFO_BOX_VALUE_CHILD_ID);
+    //     lv_label_set_text_fmt(label_value,"%d C",motor_temp);
+    // }
 
-    static int16_t accum_temp = 0;
-    if (accum_temp != can_get_accum_temp())
-    {
-        accum_temp = can_get_accum_temp();
-        lv_obj_t * label_value = lv_obj_get_child(ui_accum_temp,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%d C",accum_temp);
-    }
+    // static int16_t accum_temp = 0;
+    // if (accum_temp != can_get_accum_temp())
+    // {
+    //     accum_temp = can_get_accum_temp();
+    //     lv_obj_t * label_value = lv_obj_get_child(ui_accum_temp,INFO_BOX_VALUE_CHILD_ID);
+    //     lv_label_set_text_fmt(label_value,"%d C",accum_temp);
+    // }
 
-    static int16_t coolant_temp = 0;
-    if (coolant_temp != can_get_coolant_temp())
-    {
-        coolant_temp = can_get_coolant_temp();
-        lv_obj_t * label_value = lv_obj_get_child(ui_coolant_temp,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%d C",coolant_temp);
-    }
+    // static int16_t coolant_temp = 0;
+    // if (coolant_temp != can_get_coolant_temp())
+    // {
+    //     coolant_temp = can_get_coolant_temp();
+    //     lv_obj_t * label_value = lv_obj_get_child(ui_coolant_temp,INFO_BOX_VALUE_CHILD_ID);
+    //     lv_label_set_text_fmt(label_value,"%d C",coolant_temp);
+    // }
 
-    static int16_t coolant_flow = 0;
-    if (coolant_flow != can_get_coolant_flow())
-    {
-        coolant_flow = can_get_coolant_flow();
-        lv_obj_t * label_value = lv_obj_get_child(ui_coolant_flow,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%d lpm",coolant_flow);
-    }
+    // static int16_t coolant_flow = 0;
+    // if (coolant_flow != can_get_coolant_flow())
+    // {
+    //     coolant_flow = can_get_coolant_flow();
+    //     lv_obj_t * label_value = lv_obj_get_child(ui_coolant_flow,INFO_BOX_VALUE_CHILD_ID);
+    //     lv_label_set_text_fmt(label_value,"%d lpm",coolant_flow);
+    // }
 
-    static int16_t lowest_cell_volt = 0;
-    if (lowest_cell_volt != can_get_lowest_cell_volt())
-    {
-        lowest_cell_volt = can_get_lowest_cell_volt();
-        lv_obj_t * label_value = lv_obj_get_child(ui_lowest_cell_voltage,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%d V",lowest_cell_volt);
-    }
+    // static int16_t lowest_cell_volt = 0;
+    // if (lowest_cell_volt != can_get_lowest_cell_volt())
+    // {
+    //     lowest_cell_volt = can_get_lowest_cell_volt();
+    //     lv_obj_t * label_value = lv_obj_get_child(ui_lowest_cell_voltage,INFO_BOX_VALUE_CHILD_ID);
+    //     lv_label_set_text_fmt(label_value,"%d V",lowest_cell_volt);
+    // }
 
-    static uint8_t throttle_pct = 0;
-    if (throttle_pct != can_get_throttle_pct())
-    {
-        throttle_pct = can_get_throttle_pct();
-        lv_arc_set_value(ui_main_gauge, throttle_pct);
-    }
+    // static uint8_t throttle_pct = 0;
+    // if (throttle_pct != can_get_throttle_pct())
+    // {
+    //     throttle_pct = can_get_throttle_pct();
+    //     lv_arc_set_value(ui_main_gauge, throttle_pct);
+    // }
 
-    static int16_t accum_volt = 0;
-    if (accum_volt != can_get_accum_volt())
-    {
-        accum_volt = can_get_accum_volt();
-        lv_label_set_text_fmt(ui_accum_volt,"%d V",accum_volt);
-    }
+    // static int16_t accum_volt = 0;
+    // if (accum_volt != can_get_accum_volt())
+    // {
+    //     accum_volt = can_get_accum_volt();
+    //     lv_label_set_text_fmt(ui_accum_volt,"%d V",accum_volt);
+    // }
 
-    static int16_t accum_current = 0;
-    if (accum_current != can_get_accum_current())
-    {
-        accum_current = can_get_accum_current();
-        lv_label_set_text_fmt(ui_accum_current,"%d A",accum_current);
-    }
+    // static int16_t accum_current = 0;
+    // if (accum_current != can_get_accum_current())
+    // {
+    //     accum_current = can_get_accum_current();
+    //     lv_label_set_text_fmt(ui_accum_current,"%d A",accum_current);
+    // }
 
-    static uint8_t ams_state = 0;
-    if (ams_state != can_get_ams_state())
-    {
-        ams_state = can_get_ams_state();
-        switch (ams_state)
-        {
-        case 0:
-            lv_label_set_text(ui_ams_state, "State 0: Critical Error");
-            break;
-        case 1:
-            lv_label_set_text(ui_ams_state, "State 1: Idle");
-            break;
-        case 3:
-            lv_label_set_text(ui_ams_state, "State 3: Precharging");
-            break;       
-        case 4:
-            lv_label_set_text(ui_ams_state, "State 4: Precharged");
-            break;
-        case 5:
-            lv_label_set_text(ui_ams_state, "State 5: Ready to Drive");
-            break;
-        default:
-            break;
-        }
-    }
+    // static uint8_t ams_state = 0;
+    // if (ams_state != can_get_ams_state())
+    // {
+    //     ams_state = can_get_ams_state();
+    //     switch (ams_state)
+    //     {
+    //     case 0:
+    //         lv_label_set_text(ui_ams_state, "State 0: Critical Error");
+    //         break;
+    //     case 1:
+    //         lv_label_set_text(ui_ams_state, "State 1: Idle");
+    //         break;
+    //     case 3:
+    //         lv_label_set_text(ui_ams_state, "State 3: Precharging");
+    //         break;       
+    //     case 4:
+    //         lv_label_set_text(ui_ams_state, "State 4: Precharged");
+    //         break;
+    //     case 5:
+    //         lv_label_set_text(ui_ams_state, "State 5: Ready to Drive");
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    // }
 
 
-    if (can_get_precharge_button()) {
-        show_precharge_warning(button_warning);
-    } 
-    else if (can_get_drive_button()) {
-        show_drive_warning(button_warning);
-    } 
-    else {
-        hide_warning(button_warning);
-    }
+    // if (can_get_precharge_button()) {
+    //     show_precharge_warning(button_warning);
+    // } 
+    // else if (can_get_drive_button()) {
+    //     show_drive_warning(button_warning);
+    // } 
+    // else {
+    //     hide_warning(button_warning);
+    // }
 
-    if (can_get_bspd_error()) {
-        show_BSPD_error(critical_error);
-    } 
-    else {
-        hide_critical_error(critical_error);
-    }
+    // if (can_get_bspd_error()) {
+    //     show_BSPD_error(critical_error);
+    // } 
+    // else {
+    //     hide_critical_error(critical_error);
+    // }
 }
 
 /* -------------------------------------------------------------------------- */

@@ -23,40 +23,40 @@
 /* -------------------------------------------------------------------------- */
 /*                                   STRUCTS                                  */
 /* -------------------------------------------------------------------------- */
-struct VehicleState
+typedef struct 
 {
-	uint8_t ams_state 				= 0;
-	bool 	apps_disagree 			= false;
-	bool 	trailbraking_active 	= false;
-	bool	precharge_pressed 		= false;
-	bool	drive_pressed 			= false;
-};
+	uint8_t ams_state;
+	bool 	apps_disagree;
+	bool 	trailbraking_active;
+	bool	precharge_pressed;
+	bool	drive_pressed;
+} VehicleState;
 
-struct MotorInfo
+typedef struct
 {
-	uint8_t motor_speed			= 0; 
-	float	motor_temp 			= 0;
-	uint8_t mc_voltage 			= 0;
-	float	mc_temp 			= 0;
-  	uint8_t coolant_flow 		= 0;
-  	float 	coolant_temp 		= 0;
-};
+	uint8_t motor_speed; 
+	float	motor_temp;
+	uint8_t mc_voltage;
+	float	mc_temp;
+  	uint8_t coolant_flow;
+  	float 	coolant_temp;
+} MotorInfo;
 
-struct AccumulatorInfo
+typedef struct
 {
-	uint8_t pack_voltage 		= 0;
-  	int8_t  pack_current  		= 0;
-	uint8_t min_cell_volt		= 0;
-	float 	max_temp 			= 0; 
-};
+	uint8_t pack_voltage;
+  	int8_t  pack_current;
+	uint8_t min_cell_volt;
+	float 	max_temp; 
+} AccumulatorInfo;
 
-struct MiscInfo
+typedef struct
 {
-	uint8_t lv_bus_voltage		= 0;
-	uint8_t throttle_pct		= 0;
-	uint8_t brake_pct			= 0;
-	uint8_t regen_pct			= 0;
-};
+	uint8_t lv_bus_voltage;
+	uint8_t throttle_pct;
+	uint8_t brake_pct;
+	uint8_t regen_pct;
+} MiscInfo;
 
 
 /* -------------------------------------------------------------------------- */
