@@ -6,7 +6,7 @@
 #include "indev/mousewheel.h"
 #include "indev/keyboard.h"
 #include "sdl/sdl.h"
-#include "driver.hpp"
+#include "backend.hpp"
 
 /* -------------------------------------------------------------------------- */
 /*                              STATIC VARIABLES                              */

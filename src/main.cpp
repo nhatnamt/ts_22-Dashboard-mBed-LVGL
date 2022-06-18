@@ -21,7 +21,7 @@
 #include "lvgl.h"
 #include "lv_conf.h"
 
-#include "driver.hpp"
+#include "backend.hpp"
 #include "ui/screen_splash.h"
 #include "ui/screen_home.h"
 /* -------------------------------------------------------------------------- */
