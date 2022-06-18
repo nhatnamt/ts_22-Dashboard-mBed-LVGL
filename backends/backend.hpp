@@ -53,6 +53,9 @@ struct AccumulatorInfo
 struct MiscInfo
 {
 	uint8_t lv_bus_voltage		= 0;
+	uint8_t throttle_pct		= 0;
+	uint8_t brake_pct			= 0;
+	uint8_t regen_pct			= 0;
 };
 
 

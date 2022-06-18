@@ -11,10 +11,70 @@
 /* -------------------------------------------------------------------------- */
 /*                              STATIC VARIABLES                              */
 /* -------------------------------------------------------------------------- */
-static int8_t mc_temp = 0;
+static VehicleState		    vehicle_state;
+static MotorInfo		    motor_info;
+static AccumulatorInfo		accum_info;
+static MiscInfo			    misc_info;
 /* -------------------------------------------------------------------------- */
 /*                              STATIC FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
+/**
+ * @brief Simulate CAN traffic
+ * 
+ */
+static void data_gen(lv_timer_t *timer)
+{
+    if (motor_info.mc_temp >= 100)
+    {
+        motor_info.mc_temp = 0;
+        motor_info.mc_voltage = 0;
+        motor_info.motor_speed = 0;
+        motor_info.motor_temp = 0;
+        motor_info.coolant_flow = 0;
+        motor_info.coolant_temp = 0;
+
+        accum_info.pack_voltage = 0;
+        accum_info.pack_current = 0;
+        accum_info.min_cell_volt = 0;
+        accum_info.max_temp = 0;
+        
+        misc_info.lv_bus_voltage = 0;
+        misc_info.throttle_pct = 0;
+        misc_info.brake_pct = 0;
+        misc_info.regen_pct = 0;
+
+        vehicle_state.ams_state = 0;
+        vehicle_state.apps_disagree = false;
+        vehicle_state.trailbraking_active = false;
+        vehicle_state.precharge_pressed = false;
+        vehicle_state.drive_pressed = false;
+    }
+    else
+    {
+        motor_info.mc_temp++;
+        motor_info.mc_voltage++;
+        motor_info.motor_speed++;
+        motor_info.motor_temp++;
+        motor_info.coolant_flow++;
+        motor_info.coolant_temp++;
+
+        accum_info.pack_voltage++;
+        accum_info.pack_current++;
+        accum_info.min_cell_volt++;
+        accum_info.max_temp++;
+
+        misc_info.lv_bus_voltage++;
+        misc_info.throttle_pct++;
+        misc_info.brake_pct++;
+        misc_info.regen_pct++;
+
+        vehicle_state.ams_state++;
+        vehicle_state.apps_disagree = !vehicle_state.apps_disagree;
+        vehicle_state.trailbraking_active = !vehicle_state.trailbraking_active;
+        vehicle_state.precharge_pressed = !vehicle_state.precharge_pressed;
+        vehicle_state.drive_pressed = !vehicle_state.drive_pressed;
+    }
+}
 
 /**
  * A task to measure the elapsed time for LittlevGL
@@ -32,27 +92,13 @@ static int tick_thread(void * data)
 
     return 0;
 }
-
-static void data_simulator(lv_timer_t *timer)
-{
-    if (mc_temp >= 100)
-    {
-        mc_temp = 0;
-    }
-    else
-    {
-        mc_temp++;
-    }
-    //printf("Hi, MC temp is: %d");
-}
-
 /* -------------------------------------------------------------------------- */
 /*                              GLOBAL FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
-int16_t can_get_mc_temp(void)
-{
-    return mc_temp;
-}
+VehicleState		can_get_vehicle_state() {return vehicle_state;}
+MotorInfo			can_get_motor_info() {return motor_info;}
+AccumulatorInfo		can_get_accum_info() {return accum_info;}
+MiscInfo			can_get_misc_info() {return misc_info;}
 
 void backend_init(void)
 {
@@ -97,7 +143,7 @@ void backend_init(void)
      * Create an SDL thread to do this*/
     SDL_CreateThread(tick_thread, "tick", NULL);
 
-    lv_timer_t * timer = lv_timer_create(data_simulator,10,NULL);
+    lv_timer_t * timer = lv_timer_create(data_gen,10,NULL);
 
 }
 
