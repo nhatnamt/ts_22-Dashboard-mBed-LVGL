@@ -31,6 +31,7 @@
 /* -------------------------------------------------------------------------- */
 //gaue and info box
 lv_obj_t * ui_main_gauge;
+lv_obj_t * ui_brake_arc;
 lv_obj_t * ui_mc_temp;
 lv_obj_t * ui_motor_temp;
 lv_obj_t * ui_accum_temp;
@@ -38,7 +39,7 @@ lv_obj_t * ui_accum_volt;
 lv_obj_t * ui_accum_current;
 lv_obj_t * ui_coolant_temp;
 lv_obj_t * ui_coolant_flow;
-lv_obj_t * ui_lowest_cell_voltage;
+lv_obj_t * ui_min_cell_volt;
 lv_obj_t * ui_ams_state;
 
 lv_obj_t * button_warning;
@@ -53,119 +54,131 @@ void gauge_update_task(lv_timer_t * timer);
 /* -------------------------------------------------------------------------- */
 void gauge_update_task(lv_timer_t * timer)
 {
-    static VehicleState vehicle_state;
-    // if (mc_temp != can_get_mc_temp())
-    // {
-    //     mc_temp = can_get_mc_temp();
-    //     lv_obj_t * label_value = lv_obj_get_child(ui_mc_temp,INFO_BOX_VALUE_CHILD_ID);
-    //     lv_label_set_text_fmt(label_value,"%d C",mc_temp);
+    /*Static variable to save the previous value*/
+    static VehicleState		    vehicle_state;
+    static MotorInfo		    motor_info;
+    static AccumulatorInfo		accum_info;
+    static MiscInfo			    misc_info;
 
-    // }
+    VehicleState    new_vehicle_state  = can_get_vehicle_state();
+    MotorInfo       new_motor_info     = can_get_motor_info();
+    AccumulatorInfo new_accum_info     = can_get_accum_info();
+    MiscInfo        new_misc_info      = can_get_misc_info();
 
-    // static int16_t motor_temp = 0;
-    // if (motor_temp != can_get_motor_temp())
-    // {
-    //     motor_temp = can_get_motor_temp();
-    //     lv_obj_t * label_value = lv_obj_get_child(ui_motor_temp,INFO_BOX_VALUE_CHILD_ID);
-    //     lv_label_set_text_fmt(label_value,"%d C",motor_temp);
-    // }
+    /* Set value for the info boxes */
+    if (motor_info.mc_temp != new_motor_info.mc_temp)
+    {
+        motor_info.mc_temp = new_motor_info.mc_temp;
+        lv_obj_t * label_value = lv_obj_get_child(ui_mc_temp,INFO_BOX_VALUE_CHILD_ID);
+        lv_label_set_text_fmt(label_value,"%.1f C",motor_info.mc_temp);
+    }
 
-    // static int16_t accum_temp = 0;
-    // if (accum_temp != can_get_accum_temp())
-    // {
-    //     accum_temp = can_get_accum_temp();
-    //     lv_obj_t * label_value = lv_obj_get_child(ui_accum_temp,INFO_BOX_VALUE_CHILD_ID);
-    //     lv_label_set_text_fmt(label_value,"%d C",accum_temp);
-    // }
+    if (motor_info.motor_temp != new_motor_info.motor_temp)
+    {
+        motor_info.motor_temp = new_motor_info.motor_temp;
+        lv_obj_t * label_value = lv_obj_get_child(ui_motor_temp,INFO_BOX_VALUE_CHILD_ID);
+        lv_label_set_text_fmt(label_value,"%.1f C",motor_info.motor_temp);
+    }
 
-    // static int16_t coolant_temp = 0;
-    // if (coolant_temp != can_get_coolant_temp())
-    // {
-    //     coolant_temp = can_get_coolant_temp();
-    //     lv_obj_t * label_value = lv_obj_get_child(ui_coolant_temp,INFO_BOX_VALUE_CHILD_ID);
-    //     lv_label_set_text_fmt(label_value,"%d C",coolant_temp);
-    // }
+    if (accum_info.max_temp != new_accum_info.max_temp)
+    {
+        accum_info.max_temp = new_accum_info.max_temp;
+        lv_obj_t * label_value = lv_obj_get_child(ui_accum_temp,INFO_BOX_VALUE_CHILD_ID);
+        lv_label_set_text_fmt(label_value,"%.1f C",accum_info.max_temp);
+    }
 
-    // static int16_t coolant_flow = 0;
-    // if (coolant_flow != can_get_coolant_flow())
-    // {
-    //     coolant_flow = can_get_coolant_flow();
-    //     lv_obj_t * label_value = lv_obj_get_child(ui_coolant_flow,INFO_BOX_VALUE_CHILD_ID);
-    //     lv_label_set_text_fmt(label_value,"%d lpm",coolant_flow);
-    // }
+    if (motor_info.coolant_temp != new_motor_info.coolant_temp)
+    {
+        motor_info.coolant_temp = new_motor_info.coolant_temp;
+        lv_obj_t * label_value = lv_obj_get_child(ui_coolant_temp,INFO_BOX_VALUE_CHILD_ID);
+        lv_label_set_text_fmt(label_value,"%.1f C",motor_info.coolant_temp);
+    }
 
-    // static int16_t lowest_cell_volt = 0;
-    // if (lowest_cell_volt != can_get_lowest_cell_volt())
-    // {
-    //     lowest_cell_volt = can_get_lowest_cell_volt();
-    //     lv_obj_t * label_value = lv_obj_get_child(ui_lowest_cell_voltage,INFO_BOX_VALUE_CHILD_ID);
-    //     lv_label_set_text_fmt(label_value,"%d V",lowest_cell_volt);
-    // }
+    if (motor_info.coolant_flow != new_motor_info.coolant_flow)
+    {
+        motor_info.coolant_flow = new_motor_info.coolant_flow;
+        lv_obj_t * label_value = lv_obj_get_child(ui_coolant_flow,INFO_BOX_VALUE_CHILD_ID);
+        lv_label_set_text_fmt(label_value,"%d Lpm",motor_info.coolant_flow);
+    }
 
-    // static uint8_t throttle_pct = 0;
-    // if (throttle_pct != can_get_throttle_pct())
-    // {
-    //     throttle_pct = can_get_throttle_pct();
-    //     lv_arc_set_value(ui_main_gauge, throttle_pct);
-    // }
+    if (accum_info.min_cell_volt != new_accum_info.min_cell_volt)
+    {
+        accum_info.min_cell_volt = new_accum_info.min_cell_volt;
+        lv_obj_t * label_value = lv_obj_get_child(ui_min_cell_volt,INFO_BOX_VALUE_CHILD_ID);
+        lv_label_set_text_fmt(label_value,"%.1f V",accum_info.min_cell_volt);
+    }
 
-    // static int16_t accum_volt = 0;
-    // if (accum_volt != can_get_accum_volt())
-    // {
-    //     accum_volt = can_get_accum_volt();
-    //     lv_label_set_text_fmt(ui_accum_volt,"%d V",accum_volt);
-    // }
+    /* Main gauge update */
+    if (misc_info.throttle_pct != new_misc_info.throttle_pct)
+    {
+        misc_info.throttle_pct = new_misc_info.throttle_pct;
+        lv_arc_set_value(ui_main_gauge,misc_info.throttle_pct);
+    }
 
-    // static int16_t accum_current = 0;
-    // if (accum_current != can_get_accum_current())
-    // {
-    //     accum_current = can_get_accum_current();
-    //     lv_label_set_text_fmt(ui_accum_current,"%d A",accum_current);
-    // }
+    if (misc_info.brake_pct != new_misc_info.brake_pct)
+    {
+        misc_info.brake_pct = new_misc_info.brake_pct;
+        lv_arc_set_value(ui_brake_arc,100-misc_info.brake_pct); //invert the value
+    }
 
-    // static uint8_t ams_state = 0;
-    // if (ams_state != can_get_ams_state())
-    // {
-    //     ams_state = can_get_ams_state();
-    //     switch (ams_state)
-    //     {
-    //     case 0:
-    //         lv_label_set_text(ui_ams_state, "State 0: Critical Error");
-    //         break;
-    //     case 1:
-    //         lv_label_set_text(ui_ams_state, "State 1: Idle");
-    //         break;
-    //     case 3:
-    //         lv_label_set_text(ui_ams_state, "State 3: Precharging");
-    //         break;       
-    //     case 4:
-    //         lv_label_set_text(ui_ams_state, "State 4: Precharged");
-    //         break;
-    //     case 5:
-    //         lv_label_set_text(ui_ams_state, "State 5: Ready to Drive");
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    // }
+    if (accum_info.pack_voltage != new_accum_info.pack_voltage)
+    {
+        accum_info.pack_voltage = new_accum_info.pack_voltage;
+        lv_label_set_text_fmt(ui_accum_volt,"%d V",accum_info.pack_voltage);
+    }
 
+    if (accum_info.pack_current != new_accum_info.pack_current)
+    {
+        accum_info.pack_current = new_accum_info.pack_current;
+        lv_label_set_text_fmt(ui_accum_current,"%d A",accum_info.pack_current);
+    }
 
-    // if (can_get_precharge_button()) {
-    //     show_precharge_warning(button_warning);
-    // } 
-    // else if (can_get_drive_button()) {
-    //     show_drive_warning(button_warning);
-    // } 
-    // else {
-    //     hide_warning(button_warning);
-    // }
+    if (vehicle_state.ams_state != new_vehicle_state.ams_state)
+    {
+        vehicle_state.ams_state = new_vehicle_state.ams_state;
+        switch (vehicle_state.ams_state)
+        {
+        case 0:
+            lv_label_set_text(ui_ams_state, "State 0:\nCritical Error");
+            break;
+        case 1:
+            lv_label_set_text(ui_ams_state, "State 1: Idle");
+            break;
+        case 3:
+            lv_label_set_text(ui_ams_state, "State 3: Precharging");
+            break;       
+        case 4:
+            lv_label_set_text(ui_ams_state, "State 4: Precharged");
+            break;
+        case 5:
+            lv_label_set_text(ui_ams_state, "State 5: Ready to Drive");
+            break;
+        default:
+            break;
+        }
+    }
+    
+    /* Update warning and errors */
+    if (new_vehicle_state.precharge_pressed) 
+    {
+        show_precharge_warning(button_warning);
+    } 
+    else if (new_vehicle_state.drive_pressed) 
+        {
+            show_drive_warning(button_warning);
+        } 
+        else 
+        {
+            hide_warning(button_warning);
+        }
 
-    // if (can_get_bspd_error()) {
-    //     show_BSPD_error(critical_error);
-    // } 
-    // else {
-    //     hide_critical_error(critical_error);
-    // }
+    if (new_vehicle_state.error_ams) {
+        show_AMS_error(critical_error);
+    } 
+    else
+    {
+        hide_critical_error(critical_error);
+    }
 }
 
 /* -------------------------------------------------------------------------- */
@@ -206,7 +219,7 @@ void load_home(lv_obj_t* parent)
     lv_obj_set_style_arc_rounded(ui_main_gauge, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
     // brake arcs
-    lv_obj_t * ui_brake_arc = lv_arc_create(ui_main_gauge);
+    ui_brake_arc = lv_arc_create(ui_main_gauge);
 
     lv_obj_set_size(ui_brake_arc, GAUGE_DIA_BIG,GAUGE_DIA_BIG);
     lv_obj_center(ui_brake_arc);
@@ -292,8 +305,8 @@ void load_home(lv_obj_t* parent)
     ui_coolant_flow = info_box_create(parent,"Coolant Flow");
     lv_obj_set_pos(ui_coolant_flow,290,0);
 
-    ui_lowest_cell_voltage = info_box_create(parent,"Lowest Cell Volt");
-    lv_obj_set_pos(ui_lowest_cell_voltage,255, 165);
+    ui_min_cell_volt = info_box_create(parent,"Lowest Cell Volt");
+    lv_obj_set_pos(ui_min_cell_volt,255, 165);
 
     /* -------------------------------- AMS State ------------------------------- */
     ui_ams_state = lv_label_create(parent);

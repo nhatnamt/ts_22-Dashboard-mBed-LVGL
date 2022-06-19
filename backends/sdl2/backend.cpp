@@ -8,13 +8,14 @@
 #include "sdl/sdl.h"
 #include "backend.hpp"
 
+#include "stdio.h"
 /* -------------------------------------------------------------------------- */
 /*                              STATIC VARIABLES                              */
 /* -------------------------------------------------------------------------- */
-static VehicleState		    vehicle_state;
-static MotorInfo		    motor_info;
-static AccumulatorInfo		accum_info;
-static MiscInfo			    misc_info;
+static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false};
+static MotorInfo		    motor_info={0,0.0f,0,0.0f,0,0.0f};
+static AccumulatorInfo		accum_info={0,0,0,0.0f};
+static MiscInfo			    misc_info={0,0,0,0};
 /* -------------------------------------------------------------------------- */
 /*                              STATIC FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
@@ -43,36 +44,32 @@ static void data_gen(lv_timer_t *timer)
         misc_info.brake_pct = 0;
         misc_info.regen_pct = 0;
 
-        vehicle_state.ams_state = 0;
-        vehicle_state.apps_disagree = false;
-        vehicle_state.trailbraking_active = false;
-        vehicle_state.precharge_pressed = false;
-        vehicle_state.drive_pressed = false;
+        vehicle_state.ams_state++;
     }
     else
     {
-        motor_info.mc_temp++;
+        motor_info.mc_temp += 1.1f;
         motor_info.mc_voltage++;
         motor_info.motor_speed++;
-        motor_info.motor_temp++;
+        motor_info.motor_temp+= 1.1f;
         motor_info.coolant_flow++;
-        motor_info.coolant_temp++;
+        motor_info.coolant_temp+= 1.1f;
 
         accum_info.pack_voltage++;
         accum_info.pack_current++;
-        accum_info.min_cell_volt++;
-        accum_info.max_temp++;
+        accum_info.min_cell_volt+= 1.1f;
+        accum_info.max_temp+= 1.1f;
 
-        misc_info.lv_bus_voltage++;
+        misc_info.lv_bus_voltage+=1.1f;
         misc_info.throttle_pct++;
         misc_info.brake_pct++;
         misc_info.regen_pct++;
 
         vehicle_state.ams_state++;
-        vehicle_state.apps_disagree = !vehicle_state.apps_disagree;
-        vehicle_state.trailbraking_active = !vehicle_state.trailbraking_active;
-        vehicle_state.precharge_pressed = !vehicle_state.precharge_pressed;
-        vehicle_state.drive_pressed = !vehicle_state.drive_pressed;
+        // vehicle_state.apps_disagree = !vehicle_state.apps_disagree;
+        // vehicle_state.trailbraking_active = !vehicle_state.trailbraking_active;
+        // vehicle_state.precharge_pressed = !vehicle_state.precharge_pressed;
+        // vehicle_state.drive_pressed = !vehicle_state.drive_pressed;
     }
 }
 
@@ -143,8 +140,7 @@ void backend_init(void)
      * Create an SDL thread to do this*/
     SDL_CreateThread(tick_thread, "tick", NULL);
 
-    lv_timer_t * timer = lv_timer_create(data_gen,10,NULL);
-
+    lv_timer_t * timer = lv_timer_create(data_gen,100,NULL);
 }
 
 void backend_loop(void)

@@ -30,6 +30,11 @@ typedef struct
 	bool 	trailbraking_active;
 	bool	precharge_pressed;
 	bool	drive_pressed;
+	/* error */
+	bool	error_bspd;
+	bool 	error_imd;
+	bool 	error_pdoc;
+	bool	error_ams;
 } VehicleState;
 
 typedef struct
@@ -46,7 +51,7 @@ typedef struct
 {
 	uint8_t pack_voltage;
   	int8_t  pack_current;
-	uint8_t min_cell_volt;
+	float 	min_cell_volt;
 	float 	max_temp; 
 } AccumulatorInfo;
 
