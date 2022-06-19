@@ -43,7 +43,9 @@
 #define TICK_DEF 5
 #define TICKER_TIME 5ms
 
-
+/* -------------------------------------------------------------------------- */
+/*                                 CPP OBJECTS                                */
+/* -------------------------------------------------------------------------- */
 DigitalOut 				led1(LED1);
 DigitalOut 				led2(LED2);
 
@@ -60,24 +62,13 @@ Ticker                  ticker_heartbeat;
 Ticker                  ticker_can_transmit;
 Ticker					ticker_lvgl;
 
-//VehicleInfo vehicle_info;
-
 /* -------------------------------------------------------------------------- */
 /*                              STATIC VARIABLES                              */
 /* -------------------------------------------------------------------------- */
-static int16_t mc_temp = 0;
-static int16_t motor_temp = 0;
-static int16_t accum_temp = 0;
-static int16_t coolant_temp = 0;
-static int16_t coolant_flow = 0;
-static int16_t lowest_cell_volt = 0;
-static uint8_t throttle_pct = 0;
-static int16_t accum_volt = 0;
-static int16_t accum_current = 0;
-static uint8_t ams_state = 0;
-static int16_t precharge_pressed = 0;
-static uint8_t drive_pressed = 0;
-static uint8_t bspd_error = 0;
+static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false};
+static MotorInfo		    motor_info={0,0.0f,0,0.0f,0,0.0f};
+static AccumulatorInfo		accum_info={0,0,0,0.0f};
+static MiscInfo			    misc_info={0,0,0,0};
 
 int                     heartbeat_counter = 0;
 /* -------------------------------------------------------------------------- */
@@ -85,32 +76,6 @@ int                     heartbeat_counter = 0;
 /* -------------------------------------------------------------------------- */
 void heartbeat_cb()
 {
-    if (mc_temp >= 100)
-    {
-        mc_temp = 0;
-        motor_temp = 0;
-        accum_temp = 0;
-        coolant_temp = 0;
-        coolant_flow = 0;
-        lowest_cell_volt = 0;
-        throttle_pct = 0;
-        accum_volt = 0;
-        accum_current = 0;
-        ams_state = 0;
-    }
-    else
-    {
-        mc_temp++;
-        motor_temp++;
-        accum_temp++;
-        coolant_temp++;
-        coolant_flow++;
-        lowest_cell_volt++;
-        throttle_pct++;
-        accum_volt++;
-        accum_current++;
-        ams_state++;
-    }
 	led1 = !led1;
 	heartbeat_counter++;
     char TX_data[2] = {(char)0, (char)heartbeat_counter};
@@ -136,7 +101,7 @@ void can2_recv_cb()
         switch (can2_msg.id)
         {
         case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_DIGITAL_1_ID):
-            bspd_error = can2_msg.data[0];
+            //bspd_error = can2_msg.data[0];
             break;
         
         default:
@@ -147,19 +112,10 @@ void can2_recv_cb()
 /* -------------------------------------------------------------------------- */
 /*                              GLOBAL FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
-int16_t can_get_mc_temp() {return mc_temp;}
-int16_t can_get_motor_temp() {return motor_temp;}
-int16_t can_get_accum_temp() {return accum_temp;}
-int16_t can_get_coolant_temp() {return coolant_temp;}
-int16_t can_get_coolant_flow() {return coolant_flow;}
-int16_t can_get_lowest_cell_volt() {return lowest_cell_volt;}
-uint8_t can_get_throttle_pct() {return throttle_pct;}
-int16_t can_get_accum_volt() {return accum_volt;}
-int16_t can_get_accum_current() {return accum_current;}
-uint8_t can_get_ams_state() {return ams_state;}
-uint8_t can_get_precharge_button() {return precharge_pressed;}
-uint8_t can_get_drive_button() {return drive_pressed;}
-uint8_t can_get_bspd_error() {return bspd_error;}
+VehicleState		can_get_vehicle_state() {return vehicle_state;}
+MotorInfo			can_get_motor_info() {return motor_info;}
+AccumulatorInfo		can_get_accum_info() {return accum_info;}
+MiscInfo			can_get_misc_info() {return misc_info;}
 
 void backend_init()
 {
