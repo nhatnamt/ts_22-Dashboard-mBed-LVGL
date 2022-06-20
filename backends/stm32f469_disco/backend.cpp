@@ -81,10 +81,10 @@ void heartbeat_cb()
     char TX_data[2] = {(char)0, (char)heartbeat_counter};
     if(can2.write(CANMessage(CAN_DASH_BASE_ADDRESS, &TX_data[0], 2))) 
     {
-        printf("Heartbeat Success! State: %d Counter: %d\n", 2, heartbeat_counter);
+        //printf("Heartbeat Success! State: %d Counter: %d\n", 2, heartbeat_counter);
     }else
     {
-        printf("Hearts dead :(\r\n");
+        //printf("Hearts dead :(\r\n");
     }
 }
 
@@ -100,10 +100,25 @@ void can2_recv_cb()
     {
         switch (can2_msg.id)
         {
-        case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_DIGITAL_1_ID):
-            //bspd_error = can2_msg.data[0];
+        case (CAN_ORION_BMS_BASE_ADDRESS):
             break;
-        
+        case (CAN_BRAKE_MODULE_BASE_ADDRESS+TS_ERROR_WARNING_ID):
+            vehicle_state.error_bspd = can2_msg.data[0];
+            break;
+        case (CAN_BRAKE_MODULE_BASE_ADDRESS+TS_ANALOGUE_1_ID):
+            misc_info.brake_pct = can2_msg.data[2];
+            break;
+        case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_DIGITAL_1_ID):
+            vehicle_state.precharge_pressed = can2_msg.data[0]; //buttons
+            vehicle_state.drive_pressed = can2_msg.data[1];
+            break;
+        case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_ANALOGUE_1_ID):
+            misc_info.throttle_pct = can2_msg.data[2];
+            break;
+        case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_ANALOGUE_2_ID):
+            motor_info.mc_temp = can2_msg.data[0];
+            motor_info.motor_temp = max(can2_msg.data[2], can2_msg.data[3]);
+            break;
         default:
             break;
         }
@@ -119,6 +134,8 @@ MiscInfo			can_get_misc_info() {return misc_info;}
 
 void backend_init()
 {
+    thread_sleep_for(3000); //wait for the car to stablize
+
     can2.frequency(500000);
     can2.attach(&can2_recv_cb);
     ticker_heartbeat.attach(&heartbeat_cb,1s);
@@ -131,7 +148,6 @@ void backend_init()
     touchpad_init();
     //wait_us(1000000);
 
-    thread_sleep_for(3000); //wait for the car to stablize
 }
 
 
