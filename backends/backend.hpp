@@ -33,8 +33,9 @@ typedef struct
 	/* error */
 	bool	error_bspd;
 	bool 	error_imd;
-	bool 	error_pdoc;
-	bool	error_ams;
+	bool 	error_pdoc_precharge;
+	bool 	error_pdoc_discharge;
+	uint8_t	error_ams;
 } VehicleState;
 
 typedef struct

@@ -46,8 +46,8 @@ void hide_warning(lv_obj_t * obj);
 lv_obj_t * critical_error_create(lv_obj_t * parent);
 
 void show_IMD_error(lv_obj_t * obj);
-void show_PDOC_error(lv_obj_t * obj);
-void show_AMS_error(lv_obj_t * obj);
+void show_PDOC_error(lv_obj_t * obj, uint8_t device);
+void show_AMS_error(lv_obj_t * obj, uint8_t error_code);
 void show_BSPD_error(lv_obj_t * obj);
 void hide_critical_error(lv_obj_t * obj);
 

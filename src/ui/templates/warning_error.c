@@ -69,8 +69,8 @@ lv_obj_t * critical_error_create(lv_obj_t * parent)
     lv_obj_set_style_border_color(outter_cont,lv_palette_darken(LV_PALETTE_RED,3),0);
     lv_obj_set_style_border_width(outter_cont,15,0);
     lv_obj_set_style_bg_color(outter_cont,lv_color_black(),0);
-    lv_obj_set_style_bg_opa(outter_cont,LV_OPA_40,0);
-
+    lv_obj_set_style_bg_opa(outter_cont,LV_OPA_50,0);
+    lv_obj_clear_flag(outter_cont, LV_OBJ_FLAG_SCROLLABLE);
     
     lv_obj_t * inner_cont = lv_obj_create(outter_cont);
 
@@ -80,8 +80,9 @@ lv_obj_t * critical_error_create(lv_obj_t * parent)
     lv_obj_center(inner_cont);
 
     lv_obj_t * label = lv_label_create(inner_cont);
-    lv_obj_set_style_text_color(label,lv_palette_main(LV_PALETTE_RED),0);
+    lv_obj_set_style_text_color(label,lv_palette_lighten(LV_PALETTE_RED,1),0);
     lv_obj_set_style_text_font(label,&lv_font_montserrat_32,0);
+    lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
 
     lv_obj_add_flag(outter_cont, LV_OBJ_FLAG_HIDDEN);
     return outter_cont;
@@ -90,7 +91,7 @@ lv_obj_t * critical_error_create(lv_obj_t * parent)
 void show_IMD_error(lv_obj_t * obj)
 {
     lv_obj_t * label = get_error_label(obj);
-    lv_label_set_text(label,"CRITICAL ERROR: IMD TRIGGERD");
+    lv_label_set_text(label,"Critical error: IMD TRIGGERED");
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
 
 }
@@ -98,22 +99,46 @@ void show_IMD_error(lv_obj_t * obj)
 void show_BSPD_error(lv_obj_t * obj)
 {
     lv_obj_t * label = get_error_label(obj);
-    lv_label_set_text(label,"CRITICAL ERROR: BSPD TRIGGERD");
+    lv_label_set_text(label,"Critical error: BSPD TRIGGERED");
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
 
 }
 
-void show_PDOC_error(lv_obj_t * obj)
+void show_PDOC_error(lv_obj_t * obj, uint8_t device)
 {
     lv_obj_t * label = get_error_label(obj);
-    lv_label_set_text(label,"CRITICAL ERROR: PDOC TRIGGERD");
+    switch (device)
+    {
+    case 0: // precharge
+        lv_label_set_text(label,"! Critical error !\n PRECHARGE PDOC TRIGGERED");
+        break;
+    case 1: // discharge
+        lv_label_set_text(label,"! Critical error !\n DISCHARGE PDOC TRIGGERED");
+    default:
+        break;
+    }
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
 
 }
-void show_AMS_error(lv_obj_t * obj)
+void show_AMS_error(lv_obj_t * obj, uint8_t error_code)
 {
     lv_obj_t * label = get_error_label(obj);
-    lv_label_set_text(label,"CRITICAL ERROR: AMS TRIGGERD");
+    if (error_code & 0b00001000)
+    {
+        lv_label_set_text(label,"Critical AMS error: ORION TIMEOUT");
+    }
+    if (error_code & 0b00000100)
+    {
+        lv_label_set_text(label,"Critical AMS error: LOW CELL VOLTAGE");
+    }
+    if (error_code & 0b00000010)
+    {
+        lv_label_set_text(label,"Critical AMS error: HIGH CELL VOLTAGE");
+    }
+    if (error_code & 0b00000001)
+    {
+        lv_label_set_text(label,"Critical AMS error: PACK OVERHEAT");
+    }
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
 
 }

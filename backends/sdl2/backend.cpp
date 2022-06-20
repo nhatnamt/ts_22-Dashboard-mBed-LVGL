@@ -12,7 +12,7 @@
 /* -------------------------------------------------------------------------- */
 /*                              STATIC VARIABLES                              */
 /* -------------------------------------------------------------------------- */
-static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false};
+static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false,0};
 static MotorInfo		    motor_info={0,0.0f,0,0.0f,0,0.0f};
 static AccumulatorInfo		accum_info={0,0,0,0.0f};
 static MiscInfo			    misc_info={0,0,0,0};
@@ -25,6 +25,7 @@ static MiscInfo			    misc_info={0,0,0,0};
  */
 static void data_gen(lv_timer_t *timer)
 {
+    vehicle_state.error_ams = 0x02;
     if (motor_info.mc_temp >= 100)
     {
         motor_info.mc_temp = 0;

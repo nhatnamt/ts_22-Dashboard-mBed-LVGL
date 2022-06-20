@@ -158,7 +158,7 @@ void gauge_update_task(lv_timer_t * timer)
         }
     }
     
-    /* Update warning and errors */
+    /* Update warning and LATCH errors */
     if (new_vehicle_state.precharge_pressed) 
     {
         show_precharge_warning(button_warning);
@@ -173,11 +173,23 @@ void gauge_update_task(lv_timer_t * timer)
         }
 
     if (new_vehicle_state.error_ams) {
-        show_AMS_error(critical_error);
+        show_AMS_error(critical_error,new_vehicle_state.error_ams);
     } 
-    else
-    {
-        hide_critical_error(critical_error);
+       
+    if (new_vehicle_state.error_bspd) {
+        show_BSPD_error(critical_error);
+    }
+
+    if (new_vehicle_state.error_imd) {
+        show_IMD_error(critical_error);
+    }
+
+    if (new_vehicle_state.error_pdoc_precharge) {
+        show_PDOC_error(critical_error,0);
+    }
+
+    if (new_vehicle_state.error_pdoc_discharge) {
+        show_PDOC_error(critical_error,1);
     }
 }
 
