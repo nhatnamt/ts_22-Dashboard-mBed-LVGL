@@ -130,6 +130,8 @@ void backend_init()
     tft_init();
     touchpad_init();
     //wait_us(1000000);
+
+    thread_sleep_for(3000); //wait for the car to stablize
 }
 
 
