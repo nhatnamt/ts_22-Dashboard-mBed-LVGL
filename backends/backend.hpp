@@ -41,9 +41,9 @@ typedef struct
 typedef struct
 {
 	uint8_t motor_speed; 
-	float	motor_temp;
+	uint8_t	motor_temp;
 	uint8_t mc_voltage;
-	float	mc_temp;
+	uint8_t	mc_temp;
   	uint8_t coolant_flow;
   	float 	coolant_temp;
 } MotorInfo;
@@ -58,7 +58,7 @@ typedef struct
 
 typedef struct
 {
-	uint8_t lv_bus_voltage;
+	float lv_bus_voltage;
 	uint8_t throttle_pct;
 	uint8_t brake_pct;
 	uint8_t regen_pct;

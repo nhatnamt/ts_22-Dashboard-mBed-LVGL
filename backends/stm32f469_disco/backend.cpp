@@ -66,7 +66,7 @@ Ticker					ticker_lvgl;
 /*                              STATIC VARIABLES                              */
 /* -------------------------------------------------------------------------- */
 static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false};
-static MotorInfo		    motor_info={0,0.0f,0,0.0f,0,0.0f};
+static MotorInfo		    motor_info={0,0,0,0,0,0.0f};
 static AccumulatorInfo		accum_info={0,0,0,0.0f};
 static MiscInfo			    misc_info={0,0,0,0};
 
@@ -116,7 +116,10 @@ void can2_recv_cb()
             misc_info.throttle_pct = can2_msg.data[2];
             break;
         case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_ANALOGUE_2_ID):
-            motor_info.mc_temp = can2_msg.data[0];
+            misc_info.lv_bus_voltage = (can2_msg.data[0]*256+(can2_msg.data[1]))/10.0f;
+            break;
+        case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_ANALOGUE_3_ID):
+            motor_info.mc_temp = max(can2_msg.data[0],can2_msg.data[1]);
             motor_info.motor_temp = max(can2_msg.data[2], can2_msg.data[3]);
             break;
         default:
@@ -134,7 +137,7 @@ MiscInfo			can_get_misc_info() {return misc_info;}
 
 void backend_init()
 {
-    thread_sleep_for(3000); //wait for the car to stablize
+    wait_us(3000000); //wait for the car to stablize
 
     can2.frequency(500000);
     can2.attach(&can2_recv_cb);

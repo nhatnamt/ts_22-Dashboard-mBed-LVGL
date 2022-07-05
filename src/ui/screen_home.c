@@ -39,7 +39,7 @@ lv_obj_t * ui_accum_volt;
 lv_obj_t * ui_accum_current;
 lv_obj_t * ui_coolant_temp;
 lv_obj_t * ui_coolant_flow;
-lv_obj_t * ui_min_cell_volt;
+lv_obj_t * ui_low_voltage_sys;
 lv_obj_t * ui_ams_state;
 
 lv_obj_t * button_warning;
@@ -70,14 +70,14 @@ void gauge_update_task(lv_timer_t * timer)
     {
         motor_info.mc_temp = new_motor_info.mc_temp;
         lv_obj_t * label_value = lv_obj_get_child(ui_mc_temp,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%.1f C",motor_info.mc_temp);
+        lv_label_set_text_fmt(label_value,"%d C",motor_info.mc_temp);
     }
 
     if (motor_info.motor_temp != new_motor_info.motor_temp)
     {
         motor_info.motor_temp = new_motor_info.motor_temp;
         lv_obj_t * label_value = lv_obj_get_child(ui_motor_temp,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%.1f C",motor_info.motor_temp);
+        lv_label_set_text_fmt(label_value,"%d C",motor_info.motor_temp);
     }
 
     if (accum_info.max_temp != new_accum_info.max_temp)
@@ -101,11 +101,11 @@ void gauge_update_task(lv_timer_t * timer)
         lv_label_set_text_fmt(label_value,"%d Lpm",motor_info.coolant_flow);
     }
 
-    if (accum_info.min_cell_volt != new_accum_info.min_cell_volt)
+    if (misc_info.lv_bus_voltage != new_misc_info.lv_bus_voltage)
     {
-        accum_info.min_cell_volt = new_accum_info.min_cell_volt;
-        lv_obj_t * label_value = lv_obj_get_child(ui_min_cell_volt,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%.1f V",accum_info.min_cell_volt);
+        misc_info.lv_bus_voltage = new_misc_info.lv_bus_voltage;
+        lv_obj_t * label_value = lv_obj_get_child(ui_low_voltage_sys,INFO_BOX_VALUE_CHILD_ID);
+        lv_label_set_text_fmt(label_value,"%.1f V", misc_info.lv_bus_voltage);
     }
 
     /* Main gauge update */
@@ -317,8 +317,8 @@ void load_home(lv_obj_t* parent)
     ui_coolant_flow = info_box_create(parent,"Coolant Flow");
     lv_obj_set_pos(ui_coolant_flow,290,0);
 
-    ui_min_cell_volt = info_box_create(parent,"Lowest Cell Volt");
-    lv_obj_set_pos(ui_min_cell_volt,255, 165);
+    ui_low_voltage_sys = info_box_create(parent,"Low Voltage Sys");
+    lv_obj_set_pos(ui_low_voltage_sys,255, 165);
 
     /* -------------------------------- AMS State ------------------------------- */
     ui_ams_state = lv_label_create(parent);
