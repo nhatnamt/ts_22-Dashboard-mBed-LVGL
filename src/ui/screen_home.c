@@ -84,7 +84,7 @@ void gauge_update_task(lv_timer_t * timer)
     {
         accum_info.max_temp = new_accum_info.max_temp;
         lv_obj_t * label_value = lv_obj_get_child(ui_accum_temp,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%.1f C",accum_info.max_temp);
+        lv_label_set_text_fmt(label_value,"%d C",accum_info.max_temp);
     }
 
     if (motor_info.coolant_temp != new_motor_info.coolant_temp)
@@ -139,19 +139,19 @@ void gauge_update_task(lv_timer_t * timer)
         switch (vehicle_state.ams_state)
         {
         case 0:
-            lv_label_set_text(ui_ams_state, "State 0:\nCritical Error");
+            lv_label_set_text(ui_ams_state, "State 0:\nCRITICAL ERROR");
             break;
         case 1:
-            lv_label_set_text(ui_ams_state, "State 1: Idle");
+            lv_label_set_text(ui_ams_state, "State 1:\nIDLE");
             break;
         case 3:
-            lv_label_set_text(ui_ams_state, "State 3: Precharging");
+            lv_label_set_text(ui_ams_state, "State 3:\nPRECHARGING");
             break;       
         case 4:
-            lv_label_set_text(ui_ams_state, "State 4: Precharged");
+            lv_label_set_text(ui_ams_state, "State 4:\nPRECHARGED");
             break;
         case 5:
-            lv_label_set_text(ui_ams_state, "State 5: Ready to Drive");
+            lv_label_set_text(ui_ams_state, "State 5:\nRTD");
             break;
         default:
             break;
@@ -295,7 +295,7 @@ void load_home(lv_obj_t* parent)
     lv_obj_set_y(line, 8);
     // HV Current
     ui_accum_current = lv_label_create(ui_main_gauge);
-    lv_label_set_text(ui_accum_current, "100 A");
+    lv_label_set_text(ui_accum_current, "0 A");
 
     lv_obj_center(ui_accum_current);
     lv_obj_set_y(ui_accum_current, 45);
@@ -322,11 +322,12 @@ void load_home(lv_obj_t* parent)
 
     /* -------------------------------- AMS State ------------------------------- */
     ui_ams_state = lv_label_create(parent);
-    lv_label_set_text(ui_ams_state, "AMS State 1: Idle");
+    lv_label_set_text(ui_ams_state, "State 0:\nCRITICAL ERROR");
 
     lv_obj_center(ui_ams_state);
     lv_obj_set_y(ui_ams_state, 190);
-    lv_obj_set_style_text_font(ui_ams_state,&lv_font_montserrat_20,LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_ams_state,&lv_font_montserrat_32,LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_ams_state, LV_TEXT_ALIGN_CENTER, 0);
 
     /* --------------------------- Warning and errors --------------------------- */
     button_warning = button_warning_create(parent); // for when a button is pressed

@@ -50,10 +50,10 @@ typedef struct
 
 typedef struct
 {
-	uint8_t pack_voltage;
-  	int8_t  pack_current;
-	float 	min_cell_volt;
-	float 	max_temp; 
+	uint16_t pack_voltage;
+  	int16_t  pack_current;
+	float 	 min_cell_volt;
+	int16_t	 max_temp; 
 } AccumulatorInfo;
 
 typedef struct

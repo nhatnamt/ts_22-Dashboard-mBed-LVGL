@@ -67,7 +67,7 @@ Ticker					ticker_lvgl;
 /* -------------------------------------------------------------------------- */
 static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false};
 static MotorInfo		    motor_info={0,0,0,0,0,0.0f};
-static AccumulatorInfo		accum_info={0,0,0,0.0f};
+static AccumulatorInfo		accum_info={0,0,0,0};
 static MiscInfo			    misc_info={0,0,0,0};
 
 int                     heartbeat_counter = 0;
@@ -122,6 +122,16 @@ void can2_recv_cb()
             motor_info.mc_temp = max(can2_msg.data[0],can2_msg.data[1]);
             motor_info.motor_temp = max(can2_msg.data[2], can2_msg.data[3]);
             break;
+        case (CAN_ORION_BMS_BASE_ADDRESS + TS_ANALOGUE_3_ID):
+            accum_info.pack_voltage = (can2_msg.data[0]*256 + can2_msg.data[1])/10;
+            accum_info.pack_current = (can2_msg.data[4]*256 + can2_msg.data[5])/10;
+            break;
+        case (CAN_PRECHARGE_CONTROLLER_BASE_ADDRESS + TS_HEARTBEAT_ID):
+            vehicle_state.ams_state = can2_msg.data[0];
+            break;
+        case (CAN_ORION_BMS_BASE_ADDRESS + TS_ANALOGUE_2_ID):
+            accum_info.max_temp = can2_msg.data[2];
+            break;
         default:
             break;
         }
@@ -137,7 +147,6 @@ MiscInfo			can_get_misc_info() {return misc_info;}
 
 void backend_init()
 {
-    wait_us(3000000); //wait for the car to stablize
 
     can2.frequency(500000);
     can2.attach(&can2_recv_cb);
@@ -150,6 +159,8 @@ void backend_init()
     tft_init();
     touchpad_init();
     //wait_us(1000000);
+
+    wait_us(3000000); //wait for the car to stablize
 
 }
 
