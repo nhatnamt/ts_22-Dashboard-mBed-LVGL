@@ -147,6 +147,12 @@ MiscInfo			can_get_misc_info() {return misc_info;}
 
 void backend_init()
 {
+    // thread_sleep_for(5000);
+    // lv_init();
+    	// Disable interrupts for smooth startup routine.
+	thread_sleep_for(1000);
+	
+	__disable_irq();
 
     can2.frequency(500000);
     can2.attach(&can2_recv_cb);
@@ -155,12 +161,15 @@ void backend_init()
     //printf("Hi!\r\n");
     ticker_lvgl.attach(&lv_ticker_func,TICKER_TIME);
 
+   	// Re-enable interrupts again, now that interrupts are ready.
+	__enable_irq();
+
+	// Allow some time to settle!
+	thread_sleep_for(1000);
 
     tft_init();
     touchpad_init();
-    //wait_us(1000000);
-
-    wait_us(3000000); //wait for the car to stablize
+   
 
 }
 

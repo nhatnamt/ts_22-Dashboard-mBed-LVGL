@@ -86,7 +86,7 @@ void tft_init()
     disp_drv.sw_rotate = 1;
     lv_disp_drv_register(&disp_drv);
 
-    lv_disp_set_rotation(NULL,LV_DISP_ROT_180);
+    //lv_disp_set_rotation(NULL,LV_DISP_ROT_180);
 
 }
 

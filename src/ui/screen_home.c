@@ -15,6 +15,7 @@
 #include "backend.hpp"
 
 #include "templates/info_box.h"
+#include "templates/info_bar.h"
 #include "templates/warning_error.h"
 
 
@@ -37,6 +38,7 @@ lv_obj_t * ui_motor_temp;
 lv_obj_t * ui_accum_temp;
 lv_obj_t * ui_accum_volt;
 lv_obj_t * ui_accum_current;
+lv_obj_t * ui_accum_power;
 lv_obj_t * ui_coolant_temp;
 lv_obj_t * ui_coolant_flow;
 lv_obj_t * ui_low_voltage_sys;
@@ -44,6 +46,8 @@ lv_obj_t * ui_ams_state;
 
 lv_obj_t * button_warning;
 lv_obj_t * critical_error;
+
+float max_power = 0;
 
 /* -------------------------------------------------------------------------- */
 /*                             STATIC PROTOTYPES                              */
@@ -69,7 +73,7 @@ void gauge_update_task(lv_timer_t * timer)
     if (motor_info.mc_temp != new_motor_info.mc_temp)
     {
         motor_info.mc_temp = new_motor_info.mc_temp;
-        lv_obj_t * label_value = lv_obj_get_child(ui_mc_temp,INFO_BOX_VALUE_CHILD_ID);
+        lv_obj_t * label_value = lv_obj_get_child(ui_mc_temp,INFO_BAR_VALUE_CHILD_ID);
         lv_label_set_text_fmt(label_value,"%d C",motor_info.mc_temp);
     }
 
@@ -125,12 +129,18 @@ void gauge_update_task(lv_timer_t * timer)
     {
         accum_info.pack_voltage = new_accum_info.pack_voltage;
         lv_label_set_text_fmt(ui_accum_volt,"%d V",accum_info.pack_voltage);
+        float power = accum_info.pack_voltage*accum_info.pack_current/1000.0f;
+        if (power > max_power) max_power = power;
+        lv_label_set_text_fmt(ui_accum_power,"%.1f kW",max_power);
+        
+
     }
 
     if (accum_info.pack_current != new_accum_info.pack_current)
     {
         accum_info.pack_current = new_accum_info.pack_current;
         lv_label_set_text_fmt(ui_accum_current,"%d A",accum_info.pack_current);
+        //lv_label_set_text_fmt(ui_accum_power,"%.1f kW",accum_info.pack_voltage*accum_info.pack_current/1000.0f);
     }
 
     if (vehicle_state.ams_state != new_vehicle_state.ams_state)
@@ -301,8 +311,15 @@ void load_home(lv_obj_t* parent)
     lv_obj_set_y(ui_accum_current, 45);
     lv_obj_set_style_text_font(ui_accum_current,&lv_font_montserrat_36,LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_accum_power = lv_label_create(parent);
+    lv_label_set_text(ui_accum_power, "0 kW");
+    lv_obj_center(ui_accum_power);
+    lv_obj_set_y(ui_accum_power, -205);
+    lv_obj_set_style_text_font(ui_accum_power,&lv_font_montserrat_36,LV_PART_MAIN | LV_STATE_DEFAULT);
+
+
     /* ------------------------------- info boxes ------------------------------- */
-    ui_mc_temp = info_box_create(parent,"MC Temp");
+    ui_mc_temp = info_bar_create(parent,"MC Temp");
     lv_obj_set_pos(ui_mc_temp,-255,-165);
 
     ui_motor_temp = info_box_create(parent,"Motor Temp");

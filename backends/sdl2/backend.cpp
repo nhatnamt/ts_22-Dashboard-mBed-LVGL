@@ -13,8 +13,8 @@
 /*                              STATIC VARIABLES                              */
 /* -------------------------------------------------------------------------- */
 static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false,0};
-static MotorInfo		    motor_info={0,0.0f,0,0.0f,0,0.0f};
-static AccumulatorInfo		accum_info={0,0,0,0.0f};
+static MotorInfo		    motor_info={0,0,0,0,0,0};
+static AccumulatorInfo		accum_info={0,0,0.0f,0};
 static MiscInfo			    misc_info={0,0,0,0};
 /* -------------------------------------------------------------------------- */
 /*                              STATIC FUNCTIONS                              */
@@ -25,7 +25,7 @@ static MiscInfo			    misc_info={0,0,0,0};
  */
 static void data_gen(lv_timer_t *timer)
 {
-    vehicle_state.error_ams = 0x02;
+    //vehicle_state.error_ams = 0x02;
     if (motor_info.mc_temp >= 100)
     {
         motor_info.mc_temp = 0;
@@ -66,7 +66,7 @@ static void data_gen(lv_timer_t *timer)
         misc_info.brake_pct++;
         misc_info.regen_pct++;
 
-        vehicle_state.ams_state++;
+    //     vehicle_state.ams_state++;
         // vehicle_state.apps_disagree = !vehicle_state.apps_disagree;
         // vehicle_state.trailbraking_active = !vehicle_state.trailbraking_active;
         // vehicle_state.precharge_pressed = !vehicle_state.precharge_pressed;
