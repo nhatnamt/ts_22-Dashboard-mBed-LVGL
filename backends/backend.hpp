@@ -44,8 +44,7 @@ typedef struct
 	uint8_t	motor_temp;
 	uint8_t mc_voltage;
 	uint8_t	mc_temp;
-  	uint8_t coolant_flow;
-  	float 	coolant_temp;
+	uint8_t lgbt_temp;
 } MotorInfo;
 
 typedef struct
@@ -62,6 +61,8 @@ typedef struct
 	uint8_t throttle_pct;
 	uint8_t brake_pct;
 	uint8_t regen_pct;
+	uint16_t max_rpm;
+	uint8_t live_speed;
 } MiscInfo;
 
 

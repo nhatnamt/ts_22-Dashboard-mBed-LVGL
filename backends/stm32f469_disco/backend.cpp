@@ -66,9 +66,9 @@ Ticker					ticker_lvgl;
 /*                              STATIC VARIABLES                              */
 /* -------------------------------------------------------------------------- */
 static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false};
-static MotorInfo		    motor_info={0,0,0,0,0,0.0f};
+static MotorInfo		    motor_info={0,0,0,0,0};
 static AccumulatorInfo		accum_info={0,0,0,0};
-static MiscInfo			    misc_info={0,0,0,0};
+static MiscInfo			    misc_info={0,0,0,0,0,0};
 
 int                     heartbeat_counter = 0;
 /* -------------------------------------------------------------------------- */
@@ -103,14 +103,15 @@ void can2_recv_cb()
         case (CAN_ORION_BMS_BASE_ADDRESS):
             break;
         case (CAN_BRAKE_MODULE_BASE_ADDRESS+TS_DIGITAL_1_ID):
-            vehicle_state.error_bspd = can2_msg.data[4];
+            vehicle_state.error_bspd = !(bool)can2_msg.data[4];
             break;
         case (CAN_BRAKE_MODULE_BASE_ADDRESS+TS_ANALOGUE_1_ID):
             misc_info.brake_pct = can2_msg.data[2];
             break;
         case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_DIGITAL_1_ID):
-            vehicle_state.precharge_pressed = can2_msg.data[0]; //buttons
-            vehicle_state.drive_pressed = can2_msg.data[1];
+            vehicle_state.precharge_pressed     = can2_msg.data[0]; //buttons
+            vehicle_state.drive_pressed         = can2_msg.data[1];
+            vehicle_state.trailbraking_active   = can2_msg.data[6];
             break;
         case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_ANALOGUE_1_ID):
             misc_info.throttle_pct = can2_msg.data[2];
@@ -119,8 +120,11 @@ void can2_recv_cb()
             misc_info.lv_bus_voltage = (can2_msg.data[0]*256+(can2_msg.data[1]))/10.0f;
             break;
         case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_ANALOGUE_3_ID):
-            motor_info.mc_temp = max(can2_msg.data[0],can2_msg.data[1]);
-            motor_info.motor_temp = max(can2_msg.data[2], can2_msg.data[3]);
+            motor_info.mc_temp      = max(can2_msg.data[0],can2_msg.data[1]);
+            motor_info.motor_temp   = max(can2_msg.data[2], can2_msg.data[3]);
+            motor_info.lgbt_temp    = can2_msg.data[4];
+            misc_info.live_speed    = can2_msg.data[5];
+            misc_info.max_rpm       = can2_msg.data[6]*256+can2_msg.data[7];
             break;
         case (CAN_ORION_BMS_BASE_ADDRESS + TS_ANALOGUE_3_ID):
             accum_info.pack_voltage = (can2_msg.data[0]*256 + can2_msg.data[1])/10;
@@ -129,6 +133,10 @@ void can2_recv_cb()
         case (CAN_PRECHARGE_CONTROLLER_BASE_ADDRESS + TS_HEARTBEAT_ID):
             vehicle_state.ams_state = can2_msg.data[0];
             break;
+        case (CAN_PRECHARGE_CONTROLLER_BASE_ADDRESS + TS_ERROR_WARNING_ID):
+            vehicle_state.error_ams             = can2_msg.data[0];
+            vehicle_state.error_pdoc_precharge  = !(bool)can2_msg.data[5];
+            vehicle_state.error_imd             = !(bool)can2_msg.data[6];
         case (CAN_ORION_BMS_BASE_ADDRESS + TS_ANALOGUE_2_ID):
             accum_info.max_temp = can2_msg.data[2];
             break;

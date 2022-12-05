@@ -24,8 +24,8 @@
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
 /* -------------------------------------------------------------------------- */
-#define GAUGE_DIA_BIG 320
-#define GAUGE_WIDTH_BIG 30
+#define GAUGE_DIA_BIG 280
+#define GAUGE_WIDTH_BIG 25
 
 /* -------------------------------------------------------------------------- */
 /*                              STATIC VARIABLES                              */
@@ -36,18 +36,22 @@ lv_obj_t * ui_brake_arc;
 lv_obj_t * ui_mc_temp;
 lv_obj_t * ui_motor_temp;
 lv_obj_t * ui_accum_temp;
-lv_obj_t * ui_accum_volt;
 lv_obj_t * ui_accum_volt_bar;
 lv_obj_t * ui_accum_current;
 lv_obj_t * ui_accum_power;
 lv_obj_t * ui_low_voltage_sys;
 lv_obj_t * ui_ams_state;
 lv_obj_t * ui_ams_state_desc;
+lv_obj_t * ui_max_power;
+lv_obj_t * ui_max_rpm;
+lv_obj_t * ui_max_speed;
+lv_obj_t * ui_live_speed;
+lv_obj_t * ui_lgbt_temp;
 
 lv_obj_t * button_warning;
 lv_obj_t * critical_error;
+lv_obj_t * trailbraking_warning;
 
-float max_power = 0;
 
 /* -------------------------------------------------------------------------- */
 /*                             STATIC PROTOTYPES                              */
@@ -63,13 +67,15 @@ void gauge_update_task(lv_timer_t * timer)
     static MotorInfo		    motor_info;
     static AccumulatorInfo		accum_info;
     static MiscInfo			    misc_info;
+    static float max_power      = 0;
+    static uint8_t max_speed    = 0;
 
     VehicleState    new_vehicle_state  = can_get_vehicle_state();
     MotorInfo       new_motor_info     = can_get_motor_info();
     AccumulatorInfo new_accum_info     = can_get_accum_info();
     MiscInfo        new_misc_info      = can_get_misc_info();
 
-    /* Set value for the info boxes */
+    /* -------------------------------- Info bars -------------------------------- */
     if (motor_info.mc_temp != new_motor_info.mc_temp)
     {
         motor_info.mc_temp = new_motor_info.mc_temp;
@@ -115,14 +121,57 @@ void gauge_update_task(lv_timer_t * timer)
         }
     }
 
+    if (accum_info.pack_voltage != new_accum_info.pack_voltage)
+    {
+        accum_info.pack_voltage = new_accum_info.pack_voltage;
+        info_bar_update_value(ui_accum_volt_bar, accum_info.pack_voltage, "%d V");
+        
+        float power = accum_info.pack_voltage*accum_info.pack_current/1000.0f;
+        lv_label_set_text_fmt(ui_accum_power,"%.1f kW",power);
+        if (power > max_power) {
+            max_power = power;
+            info_box_update_value(ui_max_power,(int)max_power,"%d kW");
+        }
+
+        if (accum_info.pack_voltage < 450) {
+            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_RED));
+        }
+        else if (accum_info.pack_voltage < 520) {
+            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_YELLOW));
+        }
+        else {
+            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_GREEN));
+        }
+
+    }
+    /* ------------------------------- Info boxes ------------------------------- */
     if (misc_info.lv_bus_voltage != new_misc_info.lv_bus_voltage)
     {
         misc_info.lv_bus_voltage = new_misc_info.lv_bus_voltage;
-        lv_obj_t * label_value = lv_obj_get_child(ui_low_voltage_sys,INFO_BOX_VALUE_CHILD_ID);
-        lv_label_set_text_fmt(label_value,"%.1f V", misc_info.lv_bus_voltage);
+        info_box_update_value(ui_low_voltage_sys,misc_info.lv_bus_voltage,"%.1f V");
     }
 
-    /* Main gauge update */
+    if (misc_info.max_rpm != new_misc_info.max_rpm)
+    {
+        misc_info.max_rpm = new_misc_info.max_rpm;
+        info_box_update_value(ui_max_rpm,misc_info.max_rpm,"%d RPM");
+    }
+
+    if (misc_info.live_speed != new_misc_info.live_speed)
+    {
+        misc_info.live_speed = new_misc_info.live_speed;
+        info_box_update_value(ui_live_speed,misc_info.live_speed,"%d km/h");
+        if (new_misc_info.live_speed > max_speed) {
+            max_speed = new_misc_info.live_speed;
+            info_box_update_value(ui_max_speed,max_speed,"%d km/h");
+        }
+    }
+    if (motor_info.lgbt_temp != new_motor_info.lgbt_temp)
+    {
+        motor_info.lgbt_temp = new_motor_info.lgbt_temp;
+        info_box_update_value(ui_lgbt_temp,motor_info.lgbt_temp,"%d C");
+    }
+    /* ---------------------------- Main gauge update --------------------------- */
     if (misc_info.throttle_pct != new_misc_info.throttle_pct)
     {
         misc_info.throttle_pct = new_misc_info.throttle_pct;
@@ -135,31 +184,17 @@ void gauge_update_task(lv_timer_t * timer)
         lv_arc_set_value(ui_brake_arc,100-misc_info.brake_pct); //invert the value
     }
 
-    if (accum_info.pack_voltage != new_accum_info.pack_voltage)
-    {
-        accum_info.pack_voltage = new_accum_info.pack_voltage;
-        lv_label_set_text_fmt(ui_accum_volt,"%d V",accum_info.pack_voltage);
-        info_bar_update_value(ui_accum_volt_bar, accum_info.pack_voltage, "%d V");
-        float power = accum_info.pack_voltage*accum_info.pack_current/1000.0f;
-        if (power > max_power) max_power = power;
-        lv_label_set_text_fmt(ui_accum_power,"%.1f kW",max_power);
-        if (accum_info.pack_voltage < 450) {
-            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_RED));
-        }
-        else if (accum_info.pack_voltage < 520) {
-            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_YELLOW));
-        }
-        else {
-            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_GREEN));
-        }
-
-    }
-
     if (accum_info.pack_current != new_accum_info.pack_current)
     {
         accum_info.pack_current = new_accum_info.pack_current;
         lv_label_set_text_fmt(ui_accum_current,"%d A",accum_info.pack_current);
-        //lv_label_set_text_fmt(ui_accum_power,"%.1f kW",accum_info.pack_voltage*accum_info.pack_current/1000.0f);
+
+        float power = accum_info.pack_voltage*accum_info.pack_current/1000.0f;
+        lv_label_set_text_fmt(ui_accum_power,"%.1f kW",power);
+        if (power > max_power) {
+            max_power = power;
+            info_box_update_value(ui_max_power,(int)max_power,"%d kW");
+        }
     }
 
     if (vehicle_state.ams_state != new_vehicle_state.ams_state)
@@ -201,6 +236,11 @@ void gauge_update_task(lv_timer_t * timer)
         {
             hide_warning(button_warning);
         }
+    
+    if (new_vehicle_state.trailbraking_active)
+    {
+        show_trailbraking_warning(trailbraking_warning);
+    }
 
     if (new_vehicle_state.error_ams) {
         show_AMS_error(critical_error,new_vehicle_state.error_ams);
@@ -243,43 +283,43 @@ void load_home(lv_obj_t* parent)
     /* ------------------------------- main gauge ------------------------------- */
     ui_main_gauge = lv_arc_create(parent);
 
-    // // throttle arc
-    // lv_obj_set_size(ui_main_gauge, GAUGE_DIA_BIG,GAUGE_DIA_BIG);
-    // lv_obj_center(ui_main_gauge);
+    // throttle arc
+    lv_obj_set_size(ui_main_gauge, GAUGE_DIA_BIG,GAUGE_DIA_BIG);
+    lv_obj_align(ui_main_gauge, LV_ALIGN_CENTER, -220, -70);
     
-    // lv_arc_set_range(ui_main_gauge, 0, 100); /*Set range, value and angle limit of the arc*/
-    // lv_arc_set_value(ui_main_gauge, 50);
-    // lv_arc_set_bg_angles(ui_main_gauge, 120, 310);
+    lv_arc_set_range(ui_main_gauge, 0, 100); /*Set range, value and angle limit of the arc*/
+    lv_arc_set_value(ui_main_gauge, 50);
+    lv_arc_set_bg_angles(ui_main_gauge, 120, 310);
 
-    // lv_obj_remove_style(ui_main_gauge, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
-    // lv_obj_clear_flag(ui_main_gauge, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
+    lv_obj_remove_style(ui_main_gauge, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
+    lv_obj_clear_flag(ui_main_gauge, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
 
-    // lv_obj_set_style_arc_width(ui_main_gauge, 30, LV_PART_MAIN | LV_STATE_DEFAULT); /*remove round border background*/
-    // lv_obj_set_style_arc_rounded(ui_main_gauge, false, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_width(ui_main_gauge, GAUGE_WIDTH_BIG, LV_PART_MAIN | LV_STATE_DEFAULT); /*remove round border background*/
+    lv_obj_set_style_arc_rounded(ui_main_gauge, false, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    // lv_obj_set_style_arc_width(ui_main_gauge, 30, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
-    // lv_obj_set_style_arc_rounded(ui_main_gauge, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_width(ui_main_gauge, GAUGE_WIDTH_BIG, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
+    lv_obj_set_style_arc_rounded(ui_main_gauge, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
     // // brake arcs
     ui_brake_arc = lv_arc_create(ui_main_gauge);
 
-    // lv_obj_set_size(ui_brake_arc, GAUGE_DIA_BIG,GAUGE_DIA_BIG);
-    // lv_obj_center(ui_brake_arc);
-    // lv_arc_set_mode(ui_brake_arc, LV_ARC_MODE_REVERSE);
+    lv_obj_set_size(ui_brake_arc, GAUGE_DIA_BIG,GAUGE_DIA_BIG);
+    lv_obj_center(ui_brake_arc);
+    lv_arc_set_mode(ui_brake_arc, LV_ARC_MODE_REVERSE);
 
     
-    // lv_arc_set_range(ui_brake_arc, 0, 100); /*Set range, value and angle limit of the arc*/
-    // lv_arc_set_value(ui_brake_arc, 50);
-    // lv_arc_set_bg_angles(ui_brake_arc, 315, 60);
+    lv_arc_set_range(ui_brake_arc, 0, 100); /*Set range, value and angle limit of the arc*/
+    lv_arc_set_value(ui_brake_arc, 50);
+    lv_arc_set_bg_angles(ui_brake_arc, 315, 60);
 
-    // lv_obj_remove_style(ui_brake_arc, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
-    // lv_obj_clear_flag(ui_brake_arc, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
+    lv_obj_remove_style(ui_brake_arc, NULL, LV_PART_KNOB);   /*Be sure the knob is not displayed*/
+    lv_obj_clear_flag(ui_brake_arc, LV_OBJ_FLAG_CLICKABLE);  /*To not allow adjusting by click*/
 
-    // lv_obj_set_style_arc_width(ui_brake_arc, 12, LV_PART_MAIN | LV_STATE_DEFAULT); /*remove round border background*/
-    // lv_obj_set_style_arc_rounded(ui_brake_arc, false, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_width(ui_brake_arc, GAUGE_WIDTH_BIG, LV_PART_MAIN | LV_STATE_DEFAULT); /*remove round border background*/
+    lv_obj_set_style_arc_rounded(ui_brake_arc, false, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    // lv_obj_set_style_arc_width(ui_brake_arc, 12, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
-    // lv_obj_set_style_arc_rounded(ui_brake_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_arc_width(ui_brake_arc, GAUGE_WIDTH_BIG, LV_PART_INDICATOR | LV_STATE_DEFAULT); /*remove round border indicator*/
+    lv_obj_set_style_arc_rounded(ui_brake_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
     // regen arcs
     // lv_obj_t * ui_regen_arc = lv_arc_create(ui_main_gauge);
@@ -302,12 +342,12 @@ void load_home(lv_obj_t* parent)
     // lv_obj_set_style_arc_rounded(ui_regen_arc, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
     // HV Voltage
-    ui_accum_volt = lv_label_create(ui_main_gauge);
-    lv_label_set_text(ui_accum_volt, "600 V");
+    ui_accum_power = lv_label_create(ui_main_gauge);
+    lv_label_set_text(ui_accum_power, "0 kW");
 
-    lv_obj_center(ui_accum_volt);
-    lv_obj_set_y(ui_accum_volt, -30);
-    lv_obj_set_style_text_font(ui_accum_volt,&lv_font_montserrat_40,LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_center(ui_accum_power);
+    lv_obj_set_y(ui_accum_power, -30);
+    lv_obj_set_style_text_font(ui_accum_power,&lv_font_montserrat_38,LV_PART_MAIN | LV_STATE_DEFAULT);
 
     // A small line seperating voltage and current
     static lv_style_t style_line;
@@ -331,14 +371,7 @@ void load_home(lv_obj_t* parent)
     lv_obj_set_y(ui_accum_current, 45);
     lv_obj_set_style_text_font(ui_accum_current,&lv_font_montserrat_36,LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_accum_power = lv_label_create(parent);
-    lv_label_set_text(ui_accum_power, "0 kW");
-    lv_obj_center(ui_accum_power);
-    lv_obj_set_y(ui_accum_power, -205);
-    lv_obj_set_style_text_font(ui_accum_power,&lv_font_montserrat_36,LV_PART_MAIN | LV_STATE_DEFAULT);
-
-
-    /* ------------------------------- info boxes ------------------------------- */
+    /* ------------------------------- Info bar ------------------------------- */
     ui_mc_temp = info_bar_create(parent,"MC Temp",0,60);
     lv_obj_set_pos(ui_mc_temp,-255,110);
 
@@ -351,8 +384,25 @@ void load_home(lv_obj_t* parent)
     ui_accum_volt_bar = info_bar_create(parent,"Accumulator Volt",420,590);
     lv_obj_set_pos(ui_accum_volt_bar,255,185);
     
-    ui_low_voltage_sys = info_box_create(parent,"Low Voltage Sys");
-    lv_obj_set_pos(ui_low_voltage_sys,0, 0);
+
+    /* ------------------------------- Info boxes ------------------------------- */
+    ui_low_voltage_sys = info_box_create(parent,"Low Voltage");
+    lv_obj_set_pos(ui_low_voltage_sys, 55, -175);
+
+    ui_max_power = info_box_create(parent,"Max Power");
+    lv_obj_set_pos(ui_max_power,265, -175);
+
+    ui_max_rpm = info_box_create(parent,"Max RPM");
+    lv_obj_set_pos(ui_max_rpm,55, -80);
+
+    ui_max_speed = info_box_create(parent,"Max Speed");
+    lv_obj_set_pos(ui_max_speed,265, -80);
+
+    ui_live_speed = info_box_create(parent,"Live Speed");
+    lv_obj_set_pos(ui_live_speed,55, 15);
+
+    ui_lgbt_temp = info_box_create(parent,"lGBT Temp");
+    lv_obj_set_pos(ui_lgbt_temp,265, 15);
 
     /* -------------------------------- AMS State ------------------------------- */
     ui_ams_state = lv_label_create(parent);
@@ -378,8 +428,9 @@ void load_home(lv_obj_t* parent)
 
 
     /* --------------------------- Warning and errors --------------------------- */
-    button_warning = button_warning_create(parent); // for when a button is pressed
-    critical_error = critical_error_create(parent);
+    button_warning          = button_warning_create(parent);         // for when a button is pressed
+    trailbraking_warning    = button_warning_create(parent);   // for when trailbraking is on
+    critical_error          = critical_error_create(parent);
 
     /* --------------------------------- Timers --------------------------------- */
     lv_timer_create(gauge_update_task,10,NULL);

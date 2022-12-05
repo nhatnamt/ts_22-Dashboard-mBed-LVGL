@@ -25,6 +25,7 @@
 /*                                   INCLUDES                                 */
 /* -------------------------------------------------------------------------- */
 #include "lvgl.h"
+#include <stdio.h>
 
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
@@ -50,6 +51,7 @@ enum info_box_child_id
  */
 lv_obj_t * info_box_create (lv_obj_t * parent,  const char * label_text);
 
+void info_box_update_value(lv_obj_t * obj, const int value, const char * fmt);
 /* --------------------------------- GUARDS --------------------------------- */
 #ifdef __cplusplus
 }

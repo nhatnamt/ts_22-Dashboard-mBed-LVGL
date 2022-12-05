@@ -22,7 +22,7 @@ lv_obj_t * info_bar_create (lv_obj_t * parent, const char * label_text, const in
     /* ------------------------------- Containter ------------------------------- */
     lv_obj_t * ui_cont = lv_obj_create(parent);
 
-    lv_obj_set_size(ui_cont,275,75);
+    lv_obj_set_size(ui_cont,280,75);
     lv_obj_set_align(ui_cont, LV_ALIGN_CENTER);
 
     // style
@@ -72,7 +72,7 @@ lv_obj_t * info_bar_create (lv_obj_t * parent, const char * label_text, const in
     lv_obj_add_style(bar, &style_indic, LV_PART_INDICATOR);
     lv_bar_set_range(bar, min_val, max_val);
 
-    lv_obj_set_size(bar, 160, 33);
+    lv_obj_set_size(bar, 165, 33);
     lv_obj_align(bar,LV_ALIGN_BOTTOM_LEFT,5,0);
 
     return ui_cont;

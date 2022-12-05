@@ -22,7 +22,7 @@ lv_obj_t * info_box_create (lv_obj_t * parent, const char * label_text)
     //containter
     lv_obj_t * ui_cont = lv_obj_create(parent);
 
-    lv_obj_set_size(ui_cont,190,90);
+    lv_obj_set_size(ui_cont,200,85);
     lv_obj_set_align(ui_cont, LV_ALIGN_CENTER);
 
 
@@ -51,13 +51,16 @@ lv_obj_t * info_box_create (lv_obj_t * parent, const char * label_text)
     lv_obj_set_align(ui_value,LV_ALIGN_BOTTOM_RIGHT);
 
     lv_label_set_text(ui_value,"-1 C");
-    lv_obj_set_style_text_font(ui_value, &lv_font_montserrat_32, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_value, &lv_font_montserrat_30, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 
     return ui_cont;
 }
 
-void info_box_update_color(lv_obj_t * ui_value)
-{
-    
+void info_box_update_value(lv_obj_t * obj, const int value, const char * fmt) {
+    lv_obj_t * ui_value = lv_obj_get_child(obj, INFO_BOX_VALUE_CHILD_ID);
+
+    char buf[16];
+    sprintf(buf, fmt, value);
+    lv_label_set_text(ui_value, buf);
 }

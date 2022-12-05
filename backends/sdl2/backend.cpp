@@ -13,9 +13,9 @@
 /*                              STATIC VARIABLES                              */
 /* -------------------------------------------------------------------------- */
 static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false,0};
-static MotorInfo		    motor_info={0,0,0,0,0,0};
+static MotorInfo		    motor_info={0,0,0,0,0};
 static AccumulatorInfo		accum_info={0,0,0.0f,0};
-static MiscInfo			    misc_info={0,0,0,0};
+static MiscInfo			    misc_info={0,0,0,0,0,0};
 /* -------------------------------------------------------------------------- */
 /*                              STATIC FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
@@ -26,14 +26,14 @@ static MiscInfo			    misc_info={0,0,0,0};
 static void data_gen(lv_timer_t *timer)
 {
     //vehicle_state.error_ams = 0x02;
+    vehicle_state.trailbraking_active = 1;
     if (motor_info.mc_temp >= 120)
     {
         motor_info.mc_temp = 0;
         motor_info.mc_voltage = 0;
         motor_info.motor_speed = 0;
         motor_info.motor_temp = 0;
-        motor_info.coolant_flow = 0;
-        motor_info.coolant_temp = 0;
+        motor_info.lgbt_temp = 0;
 
         accum_info.pack_voltage = 420;
         accum_info.pack_current = 0;
@@ -44,6 +44,8 @@ static void data_gen(lv_timer_t *timer)
         misc_info.throttle_pct = 0;
         misc_info.brake_pct = 0;
         misc_info.regen_pct = 0;
+        misc_info.live_speed = 0;
+        misc_info.max_rpm = 0;
 
         vehicle_state.ams_state++;
     }
@@ -53,8 +55,7 @@ static void data_gen(lv_timer_t *timer)
         motor_info.mc_voltage++;
         motor_info.motor_speed++;
         motor_info.motor_temp+= 1.1f;
-        motor_info.coolant_flow++;
-        motor_info.coolant_temp+= 1.1f;
+        motor_info.lgbt_temp++;
 
         accum_info.pack_voltage += 5;
         accum_info.pack_current++;
@@ -65,6 +66,8 @@ static void data_gen(lv_timer_t *timer)
         misc_info.throttle_pct++;
         misc_info.brake_pct++;
         misc_info.regen_pct++;
+        misc_info.live_speed++;
+        misc_info.max_rpm++;
 
     //     vehicle_state.ams_state++;
         // vehicle_state.apps_disagree = !vehicle_state.apps_disagree;

@@ -34,6 +34,7 @@ lv_obj_t * button_warning_create(lv_obj_t * parent);
 
 void show_precharge_warning(lv_obj_t * obj);
 void show_drive_warning(lv_obj_t * obj);
+void show_trailbraking_warning(lv_obj_t * obj);
 void hide_warning(lv_obj_t * obj);
 
 

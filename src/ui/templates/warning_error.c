@@ -55,6 +55,12 @@ void show_drive_warning(lv_obj_t * obj)
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
 }
 
+void show_trailbraking_warning(lv_obj_t * obj)
+{
+    lv_obj_set_style_line_color(obj,lv_palette_main(LV_PALETTE_PINK),0);
+    lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+}
+
 void hide_warning(lv_obj_t * obj)
 {
     lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -123,19 +129,19 @@ void show_PDOC_error(lv_obj_t * obj, uint8_t device)
 void show_AMS_error(lv_obj_t * obj, uint8_t error_code)
 {
     lv_obj_t * label = get_error_label(obj);
-    if (error_code & 0b00001000)
+    if (error_code & 0b00010000)
     {
         lv_label_set_text(label,"Critical AMS error: ORION TIMEOUT");
     }
-    if (error_code & 0b00000100)
+    if (error_code & 0b0000100)
     {
         lv_label_set_text(label,"Critical AMS error: LOW CELL VOLTAGE");
     }
-    if (error_code & 0b00000010)
+    if (error_code & 0b00000100)
     {
         lv_label_set_text(label,"Critical AMS error: HIGH CELL VOLTAGE");
     }
-    if (error_code & 0b00000001)
+    if (error_code & 0b00000010)
     {
         lv_label_set_text(label,"Critical AMS error: PACK OVERHEAT");
     }
