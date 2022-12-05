@@ -74,18 +74,45 @@ void gauge_update_task(lv_timer_t * timer)
     {
         motor_info.mc_temp = new_motor_info.mc_temp;
         info_bar_update_value(ui_mc_temp, motor_info.mc_temp, "%d C");
+        if (motor_info.mc_temp > 50) {
+            info_bar_update_color(ui_mc_temp, lv_palette_main(LV_PALETTE_RED));
+        }
+        else if (motor_info.mc_temp > 40) {
+            info_bar_update_color(ui_mc_temp, lv_palette_main(LV_PALETTE_YELLOW));
+        }
+        else {
+            info_bar_update_color(ui_mc_temp, lv_palette_main(LV_PALETTE_GREEN));
+        }
     }
 
     if (motor_info.motor_temp != new_motor_info.motor_temp)
     {
         motor_info.motor_temp = new_motor_info.motor_temp;
         info_bar_update_value(ui_motor_temp, motor_info.motor_temp, "%d C");
+        if (motor_info.motor_temp > 90) {
+            info_bar_update_color(ui_motor_temp, lv_palette_main(LV_PALETTE_RED));
+        }
+        else if (motor_info.motor_temp > 60) {
+            info_bar_update_color(ui_motor_temp, lv_palette_main(LV_PALETTE_YELLOW));
+        }
+        else {
+            info_bar_update_color(ui_motor_temp, lv_palette_main(LV_PALETTE_GREEN));
+        }
     }
 
     if (accum_info.max_temp != new_accum_info.max_temp)
     {
         accum_info.max_temp = new_accum_info.max_temp;
         info_bar_update_value(ui_accum_temp, accum_info.max_temp, "%d C");
+        if (accum_info.max_temp > 50) {
+            info_bar_update_color(ui_accum_temp, lv_palette_main(LV_PALETTE_RED));
+        }
+        else if (accum_info.max_temp > 40) {
+            info_bar_update_color(ui_accum_temp, lv_palette_main(LV_PALETTE_YELLOW));
+        }
+        else {
+            info_bar_update_color(ui_accum_temp, lv_palette_main(LV_PALETTE_GREEN));
+        }
     }
 
     if (misc_info.lv_bus_voltage != new_misc_info.lv_bus_voltage)
@@ -116,7 +143,15 @@ void gauge_update_task(lv_timer_t * timer)
         float power = accum_info.pack_voltage*accum_info.pack_current/1000.0f;
         if (power > max_power) max_power = power;
         lv_label_set_text_fmt(ui_accum_power,"%.1f kW",max_power);
-        
+        if (accum_info.pack_voltage < 450) {
+            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_RED));
+        }
+        else if (accum_info.pack_voltage < 520) {
+            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_YELLOW));
+        }
+        else {
+            info_bar_update_color(ui_accum_volt_bar, lv_palette_main(LV_PALETTE_GREEN));
+        }
 
     }
 

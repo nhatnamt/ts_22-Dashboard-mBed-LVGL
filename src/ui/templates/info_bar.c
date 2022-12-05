@@ -92,5 +92,6 @@ void info_bar_update_value(lv_obj_t * obj, const int value, const char * fmt) {
 
 void info_bar_update_color(lv_obj_t * obj, lv_color_t color) {
     lv_obj_t * ui_bar = lv_obj_get_child(obj, INFO_BAR_BAR_CHILD_ID);
-    lv_obj_set_style_bg_color(ui_bar, color, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_bar, color, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_bar, color, LV_PART_MAIN | LV_PART_INDICATOR);
 }
