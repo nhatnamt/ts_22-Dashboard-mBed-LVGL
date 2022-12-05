@@ -26,7 +26,7 @@ static MiscInfo			    misc_info={0,0,0,0};
 static void data_gen(lv_timer_t *timer)
 {
     //vehicle_state.error_ams = 0x02;
-    if (motor_info.mc_temp >= 100)
+    if (motor_info.mc_temp >= 120)
     {
         motor_info.mc_temp = 0;
         motor_info.mc_voltage = 0;
@@ -35,7 +35,7 @@ static void data_gen(lv_timer_t *timer)
         motor_info.coolant_flow = 0;
         motor_info.coolant_temp = 0;
 
-        accum_info.pack_voltage = 0;
+        accum_info.pack_voltage = 420;
         accum_info.pack_current = 0;
         accum_info.min_cell_volt = 0;
         accum_info.max_temp = 0;
@@ -56,7 +56,7 @@ static void data_gen(lv_timer_t *timer)
         motor_info.coolant_flow++;
         motor_info.coolant_temp+= 1.1f;
 
-        accum_info.pack_voltage++;
+        accum_info.pack_voltage += 1;
         accum_info.pack_current++;
         accum_info.min_cell_volt+= 1.1f;
         accum_info.max_temp+= 1.1f;

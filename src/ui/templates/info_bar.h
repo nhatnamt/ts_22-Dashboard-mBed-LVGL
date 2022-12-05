@@ -34,7 +34,6 @@ enum info_bar_child_id
 {
     INFO_BAR_LABEL_CHILD_ID,
     INFO_BAR_VALUE_CHILD_ID,
-    INFO_BAR_UNIT_CHILD_ID,
     INFO_BAR_BAR_CHILD_ID
 };
 
@@ -50,7 +49,7 @@ enum info_bar_child_id
  * @param label_text bar's label
  * @return lv_obj_t* 
  */
-lv_obj_t * info_bar_create (lv_obj_t * parent,  const char * label_text);
+lv_obj_t * info_bar_create (lv_obj_t * parent,  const char * label_text, const int min_val, const int max_val);
 
 /**
  * @brief 
@@ -59,7 +58,7 @@ lv_obj_t * info_bar_create (lv_obj_t * parent,  const char * label_text);
  * @param text 
  * @param ... 
  */
-void info_bar_update_value(lv_obj_t * obj, const int value, const char * fmt, const int max_val, const int min_val);
+void info_bar_update_value(lv_obj_t * obj, const int value, const char * fmt);
 
 /* --------------------------------- GUARDS --------------------------------- */
 #ifdef __cplusplus

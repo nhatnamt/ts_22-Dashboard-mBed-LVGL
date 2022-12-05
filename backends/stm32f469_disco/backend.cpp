@@ -102,8 +102,8 @@ void can2_recv_cb()
         {
         case (CAN_ORION_BMS_BASE_ADDRESS):
             break;
-        case (CAN_BRAKE_MODULE_BASE_ADDRESS+TS_ERROR_WARNING_ID):
-            vehicle_state.error_bspd = can2_msg.data[0];
+        case (CAN_BRAKE_MODULE_BASE_ADDRESS+TS_DIGITAL_1_ID):
+            vehicle_state.error_bspd = can2_msg.data[4];
             break;
         case (CAN_BRAKE_MODULE_BASE_ADDRESS+TS_ANALOGUE_1_ID):
             misc_info.brake_pct = can2_msg.data[2];
