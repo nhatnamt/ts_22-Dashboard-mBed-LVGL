@@ -40,11 +40,11 @@ typedef struct
 
 typedef struct
 {
-	uint8_t motor_speed; 
-	uint8_t	motor_temp;
-	uint8_t mc_voltage;
-	uint8_t	mc_temp;
-	uint8_t lgbt_temp;
+	int16_t 	motor_speed; 
+	uint16_t	motor_temp;
+	uint16_t 	mc_voltage;
+	uint16_t	mc_temp;
+	uint16_t 	lgbt_temp;
 } MotorInfo;
 
 typedef struct

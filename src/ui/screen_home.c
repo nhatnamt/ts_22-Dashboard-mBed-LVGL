@@ -148,7 +148,7 @@ void gauge_update_task(lv_timer_t * timer)
     if (misc_info.lv_bus_voltage != new_misc_info.lv_bus_voltage)
     {
         misc_info.lv_bus_voltage = new_misc_info.lv_bus_voltage;
-        info_box_update_value(ui_low_voltage_sys,misc_info.lv_bus_voltage,"%.1f V");
+        info_box_update_value_float(ui_low_voltage_sys,misc_info.lv_bus_voltage,"%.1f V");
     }
 
     if (misc_info.max_rpm != new_misc_info.max_rpm)
@@ -240,6 +240,9 @@ void gauge_update_task(lv_timer_t * timer)
     if (new_vehicle_state.trailbraking_active)
     {
         show_trailbraking_warning(trailbraking_warning);
+    }
+    else {
+        hide_warning(trailbraking_warning);
     }
 
     if (new_vehicle_state.error_ams) {

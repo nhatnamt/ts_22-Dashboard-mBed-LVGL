@@ -79,14 +79,11 @@ lv_obj_t * info_bar_create (lv_obj_t * parent, const char * label_text, const in
 }
 
 
-void info_bar_update_value(lv_obj_t * obj, const int value, const char * fmt) {
+void info_bar_update_value(lv_obj_t * obj, const int16_t value, const char * fmt) {
     lv_obj_t * ui_value = lv_obj_get_child(obj, INFO_BAR_VALUE_CHILD_ID);
     lv_obj_t * ui_bar = lv_obj_get_child(obj, INFO_BAR_BAR_CHILD_ID);
 
-    char buf[16];
-    sprintf(buf, fmt, value);
-    lv_label_set_text(ui_value, buf);
-
+    lv_label_set_text_fmt(ui_value, fmt, value);
     lv_bar_set_value(ui_bar, value, LV_ANIM_ON);
 }
 

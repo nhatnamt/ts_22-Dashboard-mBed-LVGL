@@ -25,7 +25,6 @@
 /*                                   INCLUDES                                 */
 /* -------------------------------------------------------------------------- */
 #include "lvgl.h"
-#include <stdio.h>
 
 /* -------------------------------------------------------------------------- */
 /*                                   DEFINES                                  */
@@ -58,7 +57,7 @@ lv_obj_t * info_bar_create (lv_obj_t * parent,  const char * label_text, const i
  * @param text 
  * @param ... 
  */
-void info_bar_update_value(lv_obj_t * obj, const int value, const char * fmt);
+void info_bar_update_value(lv_obj_t * obj, const int16_t value, const char * fmt);
 
 void info_bar_update_color(lv_obj_t * obj, lv_color_t color);
 /* --------------------------------- GUARDS --------------------------------- */

@@ -47,12 +47,12 @@ int main() {
     lv_obj_set_style_bg_color(lv_scr_act(), lv_color_black(), LV_PART_MAIN);
 
 	/*Load splash screen*/
-	//load_splash();
+	load_splash();
 
 	/*Load navigaion after 6s of start (3s animation + 3s delay)*/
 	lv_timer_t * timer = lv_timer_create_basic();
 	lv_timer_set_cb(timer,load_nav_timer);
-	lv_timer_set_period(timer,100);
+	lv_timer_set_period(timer,3000);
     
 	lv_timer_set_repeat_count(timer,1);
     //load_nav();

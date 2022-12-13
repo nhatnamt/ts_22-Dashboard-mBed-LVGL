@@ -59,8 +59,10 @@ lv_obj_t * info_box_create (lv_obj_t * parent, const char * label_text)
 
 void info_box_update_value(lv_obj_t * obj, const int value, const char * fmt) {
     lv_obj_t * ui_value = lv_obj_get_child(obj, INFO_BOX_VALUE_CHILD_ID);
+    lv_label_set_text_fmt(ui_value, fmt, value);
+}
 
-    char buf[16];
-    sprintf(buf, fmt, value);
-    lv_label_set_text(ui_value, buf);
+void info_box_update_value_float(lv_obj_t * obj, const float value, const char * fmt) {
+    lv_obj_t * ui_value = lv_obj_get_child(obj, INFO_BOX_VALUE_CHILD_ID);
+    lv_label_set_text_fmt(ui_value, fmt, value);
 }

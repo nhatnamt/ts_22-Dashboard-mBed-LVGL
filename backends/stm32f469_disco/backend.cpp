@@ -27,7 +27,6 @@
 #include "lv_conf.h"
 #include "tft/tft.h"
 #include "mbed.h"
-
 #include "touchpad/touchpad.h"
 
 #include "can_addresses.h"
@@ -68,7 +67,7 @@ Ticker					ticker_lvgl;
 static VehicleState		    vehicle_state={0,false,false,false,false,false,false,false,false};
 static MotorInfo		    motor_info={0,0,0,0,0};
 static AccumulatorInfo		accum_info={0,0,0,0};
-static MiscInfo			    misc_info={0,0,0,0,0,0};
+static MiscInfo			    misc_info={0.0f,0,0,0,0,0};
 
 int                     heartbeat_counter = 0;
 /* -------------------------------------------------------------------------- */
@@ -79,13 +78,7 @@ void heartbeat_cb()
 	led1 = !led1;
 	heartbeat_counter++;
     char TX_data[2] = {(char)0, (char)heartbeat_counter};
-    if(can2.write(CANMessage(CAN_DASH_BASE_ADDRESS, &TX_data[0], 2))) 
-    {
-        //printf("Heartbeat Success! State: %d Counter: %d\n", 2, heartbeat_counter);
-    }else
-    {
-        //printf("Hearts dead :(\r\n");
-    }
+    can2.write(CANMessage(CAN_DASH_BASE_ADDRESS, &TX_data[0], 2));
 }
 
 void lv_ticker_func()
@@ -108,10 +101,12 @@ void can2_recv_cb()
         case (CAN_BRAKE_MODULE_BASE_ADDRESS+TS_ANALOGUE_1_ID):
             misc_info.brake_pct = can2_msg.data[2];
             break;
+        case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_ERROR_WARNING_ID):
+            vehicle_state.trailbraking_active   = can2_msg.data[1];
+            break;
         case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_DIGITAL_1_ID):
             vehicle_state.precharge_pressed     = can2_msg.data[0]; //buttons
             vehicle_state.drive_pressed         = can2_msg.data[1];
-            vehicle_state.trailbraking_active   = can2_msg.data[6];
             break;
         case (CAN_MOTEC_THROTTLE_CONTROLLER_BASE_ADDRESS + TS_ANALOGUE_1_ID):
             misc_info.throttle_pct = can2_msg.data[2];

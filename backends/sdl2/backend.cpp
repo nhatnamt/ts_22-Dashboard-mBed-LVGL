@@ -26,7 +26,7 @@ static MiscInfo			    misc_info={0,0,0,0,0,0};
 static void data_gen(lv_timer_t *timer)
 {
     //vehicle_state.error_ams = 0x02;
-    vehicle_state.trailbraking_active = 1;
+    //vehicle_state.trailbraking_active = 1;
     if (motor_info.mc_temp >= 120)
     {
         motor_info.mc_temp = 0;
